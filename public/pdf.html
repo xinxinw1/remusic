@@ -1,103 +1,34 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="./index.html">Re:Music</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+  <head>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="jquery-ui/jquery-ui.css">
+    <script src="jquery-ui/external/jquery/jquery.js"></script>
+    <script src="jquery-ui/jquery-ui.js"></script>
+    <link rel="stylesheet" href="pdf.css">
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    <script src="pdf.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="./index.html">Re:Music</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a class="nav-link" href="./pdf.html">Upload</a>
-      </li>
-    </ul>
-  </div>
-</nav>
-<link rel="stylesheet" href="jquery-ui/jquery-ui.css">
-<script src="jquery-ui/external/jquery/jquery.js"></script>
-<script src="jquery-ui/jquery-ui.js"></script>
-<style>
-.highlight {background-color: rgba(255, 255, 0, 0.3); border-radius: 0;}
-.highlight.ui-widget-content {border: 0;}
-/*.highlight .ui-dialog-titlebar {display: none;}*/
-.highlight .ui-dialog-content {display: none !important;}
-.highlight .ui-dialog-titlebar {padding: 0; border: 0; background: transparent; border-radius: 0; height: 100%;}
-.highlight .ui-dialog-titlebar-close {display: none;}
-.highlight .ui-resizable-w, .highlight .ui-resizable-e {width: 7px;}
-.highlight .ui-resizable-n, .highlight .ui-resizable-s {height: 7px;}
-.highlight .ui-resizable-se, .highlight .ui-resizable-sw, .highlight .ui-resizable-ne, .highlight .ui-resizable-nw {width: 10px; height: 10px; z-index: 100 !important;}
-.highlight .ui-icon-gripsmall-diagonal-se {background-image: none;}
-</style>
-<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
-  <script>
-// If absolute URL from the remote server is provided, configure the CORS
-// header on that server.
-var url = './acappella.pdf';
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="./pdf.html">Upload</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <h1>PDF.js 'Hello, world!' example</h1>
 
-// Loaded via <script> tag, create shortcut to access PDF.js exports.
-var pdfjsLib = window['pdfjs-dist/build/pdf'];
+    <canvas id="the-canvas"></canvas>
 
-// The workerSrc property shall be specified.
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
-
-// Asynchronous download of PDF
-var loadingTask = pdfjsLib.getDocument(url);
-loadingTask.promise.then(function(pdf) {
-  console.log('PDF loaded');
-  
-  // Fetch the first page
-  var pageNumber = 1;
-  pdf.getPage(pageNumber).then(function(page) {
-    console.log('Page loaded');
-    
-    var scale = 2;
-    var viewport = page.getViewport(scale);
-
-    // Prepare canvas using PDF page dimensions
-    var canvas = document.getElementById('the-canvas');
-    var context = canvas.getContext('2d');
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-
-    // Render PDF page into canvas context
-    var renderContext = {
-      canvasContext: context,
-      viewport: viewport
-    };
-    var renderTask = page.render(renderContext);
-    renderTask.then(function () {
-      console.log('Page rendered');
-      $(function () {
-        $("#dialog-highlight").dialog({
-          dialogClass: "highlight",
-          minHeight: 1,
-          minWidth: 1,
-          height: 100,
-          width: 100
-        });
-        $("#dialog-comment").dialog({
-          title: "Comment by Xin-Xin",
-          position: {my: "left center", at: "right center", of: "#the-canvas"}
-        });
-      });
-    });
-  });
-}, function (reason) {
-  // PDF loading error
-  console.error(reason);
-});
-</script>
-<h1>PDF.js 'Hello, world!' example</h1>
-
-<canvas id="the-canvas"></canvas>
-
-<div id="dialog-highlight"></div>
-<div id="dialog-comment"><p>Yo hey what's up</p></div>
-
-</body>
+    <div id="dialog-highlight"></div>
+    <div id="dialog-comment"><p>Yo hey what's up</p></div>
+  </body>
 </html>
