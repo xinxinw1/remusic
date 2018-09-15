@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="vextab.css" media="screen" rel="Stylesheet" type="text/css" />
+    <script src="vextab-div.js"></script>
+  <script>
+    Artist.prototype.origReset = Artist.prototype.reset;
+    Artist.prototype.reset = function () {
+      this.origReset();
+      // see http://my.vexflow.com/articles/53#comment-2117647808
+      this.customizations["beam-rests"] = "false";
+    };
+  </script>
+  </head>
+<body>
+<div class="vex-tabdiv"
+    width=680 scale=1.0 editor="true"
+    editor_width=680 editor_height=80
+>stave clef=treble key=Bb time=4/4
+notes :4 (Cn/4.E#/4.G@/4) $.a./bottom.$ $Hi$
+notes :16 E##-F@@-G-A/5 $.a-/top.,..,.a>/top.,..$ $how,do,you,do$
+notes :8 DTF-A/4 ^3^ $.a@u/bottom.$ :8d B/4 $.a@a/top.$ :16 ## | :4 A/4 T A/4</div>
+<p>See <a href="http://my.vexflow.com/articles/134">http://my.vexflow.com/articles/134</a></p>
+</body>
+</html>
+
