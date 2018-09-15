@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload</title>
+    <link href="RemusicStyle.css" media="screen" rel="Stylesheet" type="text/css" />
+</head>
+<body>
+    <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <p>Drag one or more files to this Drop Zone ...</p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-storage.js"></script>
+
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyBXZfUvEUcCSOdZBWbw_PMY2XCAEaS9Q94",
+            authDomain: "remusic-cf7bd.firebaseapp.com",
+            databaseURL: "https://remusic-cf7bd.firebaseio.com",
+            projectId: "remusic-cf7bd",
+            storageBucket: "remusic-cf7bd.appspot.com",
+            messagingSenderId: "484094823628"
+        };
+        firebase.initializeApp(config);
+    </script>
+<script>
+    var storageRef = firebase.storage().ref();
+    function dropHandler(ev) {
+        console.log('File(s) dropped');
+
+        // Prevent default behavior (Prevent file from being opened)
+        ev.preventDefault();
+
+        if (ev.dataTransfer.items) {
+            // Use DataTransferItemList interface to access the file(s)
+            if (ev.dataTransfer.items[0].kind === 'file'){
+                var file = ev.dataTransfer.items[0].getAsFile();
+                console.log('score name is ' + file.name);
+                var scoreRef = storageRef.child(file.name);
+                scoreRef.put(file).then(function(snapshot) {
+                    console.log('Uploaded a file!');
+                });
+            }
+        } else {
+            // Use DataTransfer interface to access the file(s)
+            for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+                console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
+            }
+        }
+
+        // Pass event to removeDragData for cleanup
+        removeDragData(ev)
+    }
+
+    function dragOverHandler(ev) {
+        console.log('File(s) in drop zone');
+
+        // Prevent default behavior (Prevent file from being opened)
+        ev.preventDefault();
+    }
+    function removeDragData(ev) {
+        console.log('Removing drag data')
+
+        if (ev.dataTransfer.items) {
+            // Use DataTransferItemList interface to remove the drag data
+            ev.dataTransfer.items.clear();
+        } else {
+            // Use DataTransfer interface to remove the drag data
+            ev.dataTransfer.clearData();
+        }
+    }
+</script>
+</body>
+</html>
