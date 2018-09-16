@@ -47,18 +47,14 @@ function insertCommentChain(scoreId, versionId, pageNum, highlightDiv) {
   console.log("insert comment chain", scoreId, versionId, pageNum, highlightDiv);
   var commentChainsRef = firebase.database().ref('comment-chains/' + scoreId + '/' + versionId + '/' + pageNum);
   var commentChainRef = commentChainsRef.push();
-  console.log({
-    highlightTop: highlightDiv.css("top"),
-    highlightLeft: highlightDiv.css("left"),
-    highlightWidth: highlightDiv.css("width"),
-    highlightHeight: highlightDiv.css("height"),
-  });
   commentChainRef.set({
     highlightTop: highlightDiv.css("top"),
     highlightLeft: highlightDiv.css("left"),
     highlightWidth: highlightDiv.css("width"),
     highlightHeight: highlightDiv.css("height"),
   });
+  // remove the div cause insert will readd it properly
+  highlightDiv.remove();
 }
 
 function insertComment(commentChain, comment) {
@@ -94,7 +90,8 @@ function displayVersion(scoreId, version) {
     loadingTask.promise.then(function(pdf) {
       console.log('PDF loaded');
       
-      var pageNumber = 1;
+      var pageNum = 0;
+      var pageNumber = pageNum+1;
       pdf.getPage(pageNumber).then(function(page) {
         console.log('Page loaded');
         
@@ -120,7 +117,7 @@ function displayVersion(scoreId, version) {
           if (down) {
             //console.log("up", e);
             down = false;
-            insertCommentChain(scoreId, version.key, 0, dialog);
+            insertCommentChain(scoreId, version.key, pageNum, dialog);
             dialog = undefined;
           }
         });
@@ -140,7 +137,7 @@ function displayVersion(scoreId, version) {
         renderTask.then(function () {
           console.log('Page rendered');
           $(function () {
-            displayCommentChains(scoreId, version, 0);
+            displayCommentChains(scoreId, version, pageNum);
           });
         });
       });
@@ -176,7 +173,7 @@ function makeCommentChainDiv() {
   });
 }
 
-function displayHighlightDiv(commentChain) {
+function displayHighlightDiv(scoreId, versionId, pageNum, commentChain) {
   console.log("display hightlight div", commentChain);
   var div = makeHighlightDiv();
   div.css({
@@ -185,11 +182,28 @@ function displayHighlightDiv(commentChain) {
     width: commentChain.val().highlightWidth,
     height: commentChain.val().highlightHeight,
   });
+  function updateData() {
+    console.log("update data");
+    var commentChainRef = firebase.database().ref('comment-chains/' + scoreId + '/' + versionId + '/' + pageNum + '/' + commentChain.key)
+    commentChainRef.set({
+      highlightTop: div.css("top"),
+      highlightLeft: div.css("left"),
+      highlightWidth: div.css("width"),
+      highlightHeight: div.css("height"),
+    });
+  }
+
+  div.on("resize", function (e) {
+    updateData();
+  });
+  div.on("drag", function (e) {
+    updateData();
+  });
 }
 
 function displayCommentChain(scoreId, versionId, pageNum, commentChain) {
   console.log("display comment chain", commentChain);
-  displayHighlightDiv(commentChain);
+  displayHighlightDiv(scoreId, versionId, pageNum, commentChain);
   var commentChainDiv = makeCommentChainDiv();
   var commentsRef = firebase.database().ref('comments/' + scoreId + '/' + versionId + '/' + pageNum + '/' + commentChain.key);
   commentsRef.on('child_added', function (comment) {
