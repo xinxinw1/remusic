@@ -22,27 +22,6 @@ function displayVersions(scoreId) {
   });
 }
 
-/*function getScore(id) {
-  console.log("get score", id);
-  return $.Deferred(function (deferred) {
-    deferred.resolve({
-      versions: [
-        {
-          file: "./acappella.pdf",
-          commentChains: [
-            {
-              highlightTop: 25,
-              highlightLeft: 63,
-              highlightWidth: 100,
-              highlightHeight: 100,
-            }
-          ]
-        }
-      ]
-    });
-  });
-}*/
-
 function insertCommentChain(scoreId, versionId, pageNum, highlightDiv) {
   console.log("insert comment chain", scoreId, versionId, pageNum, highlightDiv);
   var commentChainsRef = firebase.database().ref('comment-chains/' + scoreId + '/' + versionId + '/' + pageNum);
@@ -121,14 +100,11 @@ function displayVersion(scoreId, version) {
           if (down) {
             //console.log("up", e);
             down = false;
-            var offset = $("#highlights").offset();
-            var currOffsetX = e.pageX - offset.left;
-            var currOffsetY = e.pageY - offset.top;
-            var width = Math.abs(mousedownEvent.offsetX - currOffsetX);
-            var height = Math.abs(mousedownEvent.offsetY - currOffsetY);
-            if (width > 3 && height > 3){
-                  insertCommentChain(scoreId, version.key, pageNum, dialog);
-            };
+            if (Math.abs(e.pageX-mousedownEvent.pageX) > 10 && Math.abs(e.pageY-mousedownEvent.pageY) > 10) {
+              insertCommentChain(scoreId, version.key, pageNum, dialog);
+            } else {
+              dialog.remove();
+            }
             dialog = undefined;
           }
         });
