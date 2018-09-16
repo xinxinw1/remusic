@@ -49,8 +49,14 @@
             </button>
           </div>
           <div class="modal-body">
-            <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+            <div id="drop_zone" ondrop="onDropHandler(event);" ondragover="onDragOverHandler(event);">
               <p id="upload_text"><i class="fas fa-cloud-upload-alt"></i>  Drag the music score pdf file here</p>
+              <div>
+
+                <input type="file"
+                       id="scoreFile"
+                       accept=".pdf" />
+              </div>
             </div>
           </div>
         </div>
@@ -129,7 +135,7 @@
         var database = firebase.database();
         var scores = database.ref("scores");
         var versions = database.ref("versions");
-        function dropHandler(ev) {
+        function onDropHandler(ev) {
           console.log('File(s) dropped');
 
           ev.preventDefault();
@@ -156,29 +162,51 @@
               var pdfRef = storage.ref("pdfs/" + scoreItem.key + '/' + versionItem.key + '/' + file.name)
               pdfRef.put(file).then(function(snapshot) {
                 console.log('Uploaded a file!');
+                  window.location = "./score.html?id="+scoreItem.key;
               });
-
-              var currentTime = new Date().toLocaleDateString();
 
             }
           }
-        // Pass event to removeDragData for cleanup
         removeDragData(ev)
       }
 
-      function dragOverHandler(ev) {
-        console.log('File(s) in drop zone');
+        function removeDragData(ev) {
+            if (ev.dataTransfer.items) {
+                ev.dataTransfer.items.clear();
+            }
+        }
+
+        var input = document.getElementById("scoreFile");
+        input.addEventListener('change', function(ev){
+            var file = input.files[0];
+            var len = file.name.length;
+            var filename = file.name.substring(0,len-4);
+            console.log('score name is ' + filename);
+            var scoreItem = scores.push();
+            scoreItem.set({
+                title: filename
+            }).then(function(snapshot){
+                console.log("scores sent." + scoreItem.key)
+            });
+            var versionItem = database.ref("versions/"+scoreItem.key).push();
+            versionItem.set({
+                file: file.name
+            }).then(function(snapshot){
+                console.log("versions sent")
+            });
+            var pdfRef = storage.ref("pdfs/" + scoreItem.key + '/' + versionItem.key + '/' + file.name)
+            pdfRef.put(file).then(function(snapshot) {
+                console.log('Uploaded a file!');
+                window.location = "./score.html?id="+scoreItem.key;
+            });
+
+        });
+
+
+      function onDragOverHandler(ev) {
         ev.preventDefault();
       }
-      function removeDragData(ev) {
-        console.log('Removing drag data')
 
-        if (ev.dataTransfer.items) {
-          ev.dataTransfer.items.clear();
-        } else {
-          ev.dataTransfer.clearData();
-        }
-      }
     </script>
   </body>
   </html>
