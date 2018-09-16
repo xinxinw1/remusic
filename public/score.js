@@ -253,16 +253,11 @@ notes :4 A/4 B/4 C/4 D/4`);
   div.appendChild(vextabError);
   p1.appendChild(vextabTextarea);
   div.appendChild(p1);
-  var p2 = document.createElement("p");
-  var a = document.createElement("a");
-  a.setAttribute("href", "./help.html");
-  a.appendChild(document.createTextNode("Help"));
-  p2.appendChild(a);
-  div.appendChild(p2);
   var p3 = document.createElement("p");
   var input = document.createElement("input");
   input.setAttribute("type", "button");
   input.setAttribute("value", "Submit");
+  input.setAttribute("class","btn btn-success");
   $(input).on("click", function () {
     insertComment(scoreId, versionId, pageNum, commentChainId, div, {
       username: "anonymous",
@@ -271,6 +266,14 @@ notes :4 A/4 B/4 C/4 D/4`);
     });
   });
   p3.appendChild(input);
+  var a = document.createElement("a");
+  a.setAttribute("href", "./help.html");
+  a.setAttribute("class","btn btn-link");
+  $(a).css("color", '#007bff');
+  $(a).css("text-decoration", 'underline');
+  $(a).css("margin-left", '7em');
+  a.appendChild(document.createTextNode("Help"));
+  p3.appendChild(a);
   div.appendChild(p3);
   commentChainDiv.append(div);
 }
