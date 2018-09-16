@@ -37,6 +37,8 @@
 <script>
     var storageRef = firebase.storage().ref();
     var database = firebase.database();
+    var scores = database.ref("scores");
+    var versions = database.ref("versions");
     function dropHandler(ev) {
         console.log('File(s) dropped');
 
@@ -55,19 +57,19 @@
                 });
 
                 var currentTime = new Date().toLocaleDateString();
-                console.log("database");
-                database.ref(filename).set({
-                    versions: [
-                        {
-                            file: file.name,
-                            date: currentTime,
-                            commentChains:[]
-                        }
-                    ]
+                var scoreItem = scores.push();
+                var versionItem = database.ref("versions/"+scoreItem.key).push();
+                scoreItem.set({
+                    title: filename
                 }).then(function(snapshot){
-                    console.log("Data set.")
+                    console.log("scores sent." + scoreItem.key)
                 });
-                console.log("done");
+                versionItem.set({
+                    file: file.name
+                }).then(function(snapshot){
+                    console.log("versions sent")
+                });
+
             }
         }
         // Pass event to removeDragData for cleanup
