@@ -28,8 +28,8 @@
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
             <a class="nav-link" href="#"><button type="button" class="btn btn-dark" data-toggle="modal" data-target="#exampleModal">
-      Upload
-    </button></a>
+              Upload
+            </button></a>
           </li>
         </ul>
       </div>
@@ -65,6 +65,9 @@ notes :8 DTF-A/4 ^3^ $.a@u/bottom.$ :8d B/4 $.a@a/top.$ :16 ## | :4 A/4 T A/4
     </div>
     <br>
     <p>See <a href="http://my.vexflow.com/articles/134">http://my.vexflow.com/articles/134</a> for instructions on how to use Music Editor</p>
+
+    <table id="scoresDisplay"></table>
+
     <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-firestore.js"></script>
@@ -75,70 +78,92 @@ notes :8 DTF-A/4 ^3^ $.a@u/bottom.$ :8d B/4 $.a@a/top.$ :16 ## | :4 A/4 T A/4
     <script>
         // Initialize Firebase
         var config = {
-            apiKey: "AIzaSyBXZfUvEUcCSOdZBWbw_PMY2XCAEaS9Q94",
-            authDomain: "remusic-cf7bd.firebaseapp.com",
-            databaseURL: "https://remusic-cf7bd.firebaseio.com",
-            projectId: "remusic-cf7bd",
-            storageBucket: "remusic-cf7bd.appspot.com",
-            messagingSenderId: "484094823628"
+          apiKey: "AIzaSyBXZfUvEUcCSOdZBWbw_PMY2XCAEaS9Q94",
+          authDomain: "remusic-cf7bd.firebaseapp.com",
+          databaseURL: "https://remusic-cf7bd.firebaseio.com",
+          projectId: "remusic-cf7bd",
+          storageBucket: "remusic-cf7bd.appspot.com",
+          messagingSenderId: "484094823628"
         };
         firebase.initializeApp(config);
-    </script>
-    <script>
-        var storageRef = firebase.storage().ref();
+      </script>
+      <script>
+        function displayScores() {
+          console.log("Im here display scores");
+          var scoresRef = firebase.database().ref('scores');
+          scoresRef.on('child_added', function (score) {
+            displayScore(score);
+          });
+        }
+
+        function displayScore(score) {
+          console.log("Im here display score");
+          var tr = document.createElement("tr");
+          var td = document.createElement("td");
+          var a = document.createElement("a");
+          a.setAttribute("href", "./score.html?id=" + score.key);
+          a.appendChild(document.createTextNode(score.val().title));
+          td.appendChild(a);
+          tr.appendChild(td);
+          $('#scoresDisplay').append(tr);
+        }
+
+        displayScores();
+
+        var storage = firebase.storage();
         var database = firebase.database();
         var scores = database.ref("scores");
         var versions = database.ref("versions");
         function dropHandler(ev) {
-            console.log('File(s) dropped');
+          console.log('File(s) dropped');
 
-            ev.preventDefault();
+          ev.preventDefault();
 
-            if (ev.dataTransfer.items) {
-                // DataTransferItemList interface
-                if (ev.dataTransfer.items[0].kind === 'file'){
-                    var file = ev.dataTransfer.items[0].getAsFile();
-                    var len = file.name.length;
-                    var filename = file.name.substring(0,len-4);
-                    console.log('score name is ' + filename);
-                    var scoreRef = storageRef.child(filename);
-                    scoreRef.put(file).then(function(snapshot) {
-                        console.log('Uploaded a file!');
-                    });
+          if (ev.dataTransfer.items) {
+            // DataTransferItemList interface
+            if (ev.dataTransfer.items[0].kind === 'file'){
+              var file = ev.dataTransfer.items[0].getAsFile();
+              var len = file.name.length;
+              var filename = file.name.substring(0,len-4);
+              console.log('score name is ' + filename);
+              var scoreItem = scores.push();
+              scoreItem.set({
+                title: filename
+              }).then(function(snapshot){
+                console.log("scores sent." + scoreItem.key)
+              });
+              var versionItem = database.ref("versions/"+scoreItem.key).push();
+              versionItem.set({
+                file: file.name
+              }).then(function(snapshot){
+                console.log("versions sent")
+              });
+              var pdfRef = storage.ref("pdfs/" + scoreItem.key + '/' + versionItem.key + '/' + file.name)
+              pdfRef.put(file).then(function(snapshot) {
+                console.log('Uploaded a file!');
+              });
 
-                    var currentTime = new Date().toLocaleDateString();
-                    var scoreItem = scores.push();
-                    var versionItem = database.ref("versions/"+scoreItem.key).push();
-                    scoreItem.set({
-                        title: filename
-                    }).then(function(snapshot){
-                        console.log("scores sent." + scoreItem.key)
-                    });
-                    versionItem.set({
-                        file: file.name
-                    }).then(function(snapshot){
-                        console.log("versions sent")
-                    });
+              var currentTime = new Date().toLocaleDateString();
 
-                }
             }
-            // Pass event to removeDragData for cleanup
-            removeDragData(ev)
-        }
+          }
+        // Pass event to removeDragData for cleanup
+        removeDragData(ev)
+      }
 
-        function dragOverHandler(ev) {
-            console.log('File(s) in drop zone');
-            ev.preventDefault();
-        }
-        function removeDragData(ev) {
-            console.log('Removing drag data')
+      function dragOverHandler(ev) {
+        console.log('File(s) in drop zone');
+        ev.preventDefault();
+      }
+      function removeDragData(ev) {
+        console.log('Removing drag data')
 
-            if (ev.dataTransfer.items) {
-                ev.dataTransfer.items.clear();
-            } else {
-                ev.dataTransfer.clearData();
-            }
+        if (ev.dataTransfer.items) {
+          ev.dataTransfer.items.clear();
+        } else {
+          ev.dataTransfer.clearData();
         }
+      }
     </script>
   </body>
   </html>
