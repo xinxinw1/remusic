@@ -122,15 +122,17 @@ function displayVersion(scoreId, version) {
         var down = false;
         var dialog;
         $(canvas).on("mousedown", function (e) {
-          //console.log("down", e);
-          e.preventDefault();
-          mousedownEvent = e;
-          down = true;
-          dialog = makeHighlightDiv();
+          if (e.which === 1) {
+            console.log("down", e);
+            e.preventDefault();
+            mousedownEvent = e;
+            down = true;
+            dialog = makeHighlightDiv();
+          }
         });
         $(document).on("mouseup", function (e) {
           if (down) {
-            //console.log("up", e);
+            console.log("up", e);
             down = false;
             if (Math.abs(e.pageX-mousedownEvent.pageX) > 10 && Math.abs(e.pageY-mousedownEvent.pageY) > 10) {
               insertCommentChain(scoreId, version.key, pageNum, dialog);
@@ -142,7 +144,7 @@ function displayVersion(scoreId, version) {
         });
         $(document).on("mousemove", function (e) {
           if (down) {
-            //console.log("mouse move ",  e);
+            console.log("mouse move ",  e);
             setDialogPosition(dialog, mousedownEvent, e);
           }
         });
@@ -256,7 +258,7 @@ function renderVextabText(canvas, text) {
   // Create VexFlow Renderer from canvas element with id #boo
   var renderer = new Renderer(canvas, Renderer.Backends.CANVAS);
   // Initialize VexTab artist and parser.
-  var artist = new VexTabDiv.Artist(10, 10, 600, {scale: 0.8});
+  var artist = new VexTabDiv.Artist(10, 10, 300, {scale: 0.8});
   var vextab = new VexTabDiv.VexTab(artist);
   try {
     vextab.parse(text);
@@ -274,7 +276,7 @@ function renderVextab(textarea, canvas, error) {
   // Create VexFlow Renderer from canvas element with id #boo
   var renderer = new Renderer(canvas, Renderer.Backends.CANVAS);
   // Initialize VexTab artist and parser.
-  var artist = new VexTabDiv.Artist(10, 10, 600, {scale: 0.8});
+  var artist = new VexTabDiv.Artist(10, 10, 300, {scale: 0.8});
   var vextab = new VexTabDiv.VexTab(artist);
   function render() {
     try {
