@@ -180,7 +180,7 @@ function makeCommentChainDiv(scoreId, versionId, pageNum, commentChainId) {
   var div = document.createElement("div");
   div.setAttribute("class", "comment-chain");
   return $(div).dialog({
-    title: "Comment by Xin-Xin",
+    title: "",
     position: {my: "left center", at: "right center", of: "#pdf-canvas"},
     buttons: [
       {
