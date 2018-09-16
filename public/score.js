@@ -213,7 +213,7 @@ function makeCommentChainDiv(scoreId, versionId, pageNum, commentChain) {
     }
 
     console.log(obj);
-    commentChainRef.set(obj);
+    commentChainRef.update(obj);
   }
   return dialog;
 }
@@ -338,7 +338,7 @@ function displayHighlightDiv(scoreId, versionId, pageNum, commentChain) {
   function updateData() {
     console.log("update data");
     var commentChainRef = firebase.database().ref('comment-chains/' + scoreId + '/' + versionId + '/' + pageNum + '/' + commentChain.key)
-    commentChainRef.set({
+    commentChainRef.update({
       highlightTop: div.css("top"),
       highlightLeft: div.css("left"),
       highlightWidth: div.css("width"),
