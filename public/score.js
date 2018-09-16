@@ -73,10 +73,14 @@ function displayVersion(scoreId, version) {
       var offset = $("#highlights").offset();
       var currOffsetX = currEvent.pageX - offset.left;
       var currOffsetY = currEvent.pageY - offset.top;
-      var topVal = Math.min(startEvent.offsetY, currOffsetY);
-      var leftVal = Math.min(startEvent.offsetX, currOffsetX);
-      var width = Math.abs(startEvent.offsetX - currOffsetX);
-      var height = Math.abs(startEvent.offsetY - currOffsetY);
+      var startOffsetX = startEvent.pageX - offset.left;
+      var startOffsetY = startEvent.pageY - offset.top;
+      var topVal = Math.min(startOffsetY, currOffsetY);
+      var leftVal = Math.min(startOffsetX, currOffsetX);
+      var width = Math.abs(startOffsetX - currOffsetX);
+      var height = Math.abs(startOffsetY - currOffsetY);
+      console.log(startEvent);
+      console.log('dialog position', currOffsetX, currOffsetY, topVal, leftVal, width, height);
       dialogElement.css({top: topVal, left: leftVal, height: height, width: width});
     }
 
@@ -226,6 +230,7 @@ function addTextToCommentChain(scoreId, versionId, pageNum, commentChainId, comm
   var input = document.createElement("input");
   input.setAttribute("type", "button");
   input.setAttribute("value", "Submit");
+  input.setAttribute("class", "btn btn-success");
   $(input).on("click", function () {
     insertComment(scoreId, versionId, pageNum, commentChainId, div, {
       username: "anonymous",
@@ -257,7 +262,7 @@ notes :4 A/4 B/4 C/4 D/4`);
   var input = document.createElement("input");
   input.setAttribute("type", "button");
   input.setAttribute("value", "Submit");
-  input.setAttribute("class","btn btn-success");
+  input.setAttribute("class", "btn btn-success");
   $(input).on("click", function () {
     insertComment(scoreId, versionId, pageNum, commentChainId, div, {
       username: "anonymous",
