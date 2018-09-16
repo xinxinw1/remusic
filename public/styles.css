@@ -15,7 +15,13 @@ body {
 }
 
 
+.vex-tabdiv {
+	left: 26%;
+}
 
+#help {
+	text-align: center;
+}
 
 .jumbotron {
 	background: #C33764;  /* fallback for old browsers */
