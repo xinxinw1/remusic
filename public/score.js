@@ -41,6 +41,8 @@ function insertCommentChain(scoreId, versionId, pageNum, highlightDiv) {
     highlightLeft: highlightDiv.css("left"),
     highlightWidth: highlightDiv.css("width"),
     highlightHeight: highlightDiv.css("height"),
+    commentChainTop: highlightDiv.offset().top - $("#pdf-canvas").offset().top,
+    commentChainLeft: $("#pdf-canvas").offset().left + $("#pdf-canvas").width() + 20,
   });
   // remove the div cause insert will readd it properly
   highlightDiv.remove();
@@ -162,13 +164,13 @@ function makeHighlightDiv() {
   return $(div);
 }
 
-function makeCommentChainDiv(scoreId, versionId, pageNum, commentChainId) {
-  console.log("make comment chain div");
+function makeCommentChainDiv(scoreId, versionId, pageNum, commentChain) {
+  console.log("make comment chain div", commentChain.val());
   var div = document.createElement("div");
   div.setAttribute("class", "comment-chain");
-  return $(div).dialog({
+
+  var dialog = $(div).dialog({
     title: "",
-    position: {my: "left center", at: "right center", of: "#pdf-canvas"},
     buttons: [
       {
         text: "+ Music",
@@ -182,8 +184,34 @@ function makeCommentChainDiv(scoreId, versionId, pageNum, commentChainId) {
           addTextToCommentChain(scoreId, versionId, pageNum, commentChainId, $(this));
         }
       }
-    ]
+    ],
+    position: {"my": "left top", "at": "left+" + commentChain.val().commentChainLeft + " top+" + commentChain.val().commentChainTop, "of": "#pdf-canvas", "collision": "none"},
+    width: commentChain.val().commentChainWidth || 300,
+    height: commentChain.val().commentChainHeight || "auto",
+    drag: function (e, ui) {
+      updateData();
+    },
+    resize: function (e, ui) {
+      updateData(ui.size);
+    }
   });
+
+  function updateData(size) {
+    console.log("update data");
+    var commentChainRef = firebase.database().ref('comment-chains/' + scoreId + '/' + versionId + '/' + pageNum + '/' + commentChain.key)
+    var obj = {
+      commentChainTop: $(div).dialog("widget").offset().top - $("#pdf-canvas").offset().top,
+      commentChainLeft: $(div).dialog("widget").offset().left - $("#pdf-canvas").offset().left,
+    };
+    if (size) {
+      obj.commentChainWidth = size.width;
+      obj.commentChainHeight = size.height;
+    }
+
+    console.log(obj);
+    commentChainRef.set(obj);
+  }
+  return dialog;
 }
 
 function addTextToCommentChain(scoreId, versionId, pageNum, commentChainId, commentChainDiv) {
@@ -310,12 +338,13 @@ function displayHighlightDiv(scoreId, versionId, pageNum, commentChain) {
   div.on("drag", function (e) {
     updateData();
   });
+  return div;
 }
 
 function displayCommentChain(scoreId, versionId, pageNum, commentChain) {
   console.log("display comment chain", commentChain);
-  displayHighlightDiv(scoreId, versionId, pageNum, commentChain);
-  var commentChainDiv = makeCommentChainDiv(scoreId, versionId, pageNum, commentChain.key);
+  var highlightDiv = displayHighlightDiv(scoreId, versionId, pageNum, commentChain);
+  var commentChainDiv = makeCommentChainDiv(scoreId, versionId, pageNum, commentChain);
   var commentsRef = firebase.database().ref('comments/' + scoreId + '/' + versionId + '/' + pageNum + '/' + commentChain.key);
   commentsRef.on('child_added', function (comment) {
     displayComment(commentChainDiv, comment);
