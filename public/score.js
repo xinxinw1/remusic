@@ -47,22 +47,22 @@ function insertCommentChain(scoreId, versionId, pageNum, highlightDiv) {
   console.log("insert comment chain", scoreId, versionId, pageNum, highlightDiv);
   var commentChainsRef = firebase.database().ref('comment-chains/' + scoreId + '/' + versionId + '/' + pageNum);
   var commentChainRef = commentChainsRef.push();
-  console.log({
-    highlightTop: highlightDiv.css("top"),
-    highlightLeft: highlightDiv.css("left"),
-    highlightWidth: highlightDiv.css("width"),
-    highlightHeight: highlightDiv.css("height"),
-  });
   commentChainRef.set({
     highlightTop: highlightDiv.css("top"),
     highlightLeft: highlightDiv.css("left"),
     highlightWidth: highlightDiv.css("width"),
     highlightHeight: highlightDiv.css("height"),
   });
+  // remove the div cause insert will readd it properly
+  highlightDiv.remove();
 }
 
-function insertComment(commentChain, comment) {
-  console.log("insert comment", commentChain, comment);
+function insertComment(scoreId, versionId, pageNum, commentChainId, commentInsertDiv, comment) {
+  console.log("insert comment", scoreId, versionId, pageNum, commentChainId, comment);
+  var commentsRef = firebase.database().ref('comments/' + scoreId + '/' + versionId + '/' + pageNum + '/' + commentChainId);
+  var commentRef = commentsRef.push();
+  commentRef.set(comment);
+  commentInsertDiv.remove();
 }
 
 function displayVersion(scoreId, version) {
@@ -94,7 +94,8 @@ function displayVersion(scoreId, version) {
     loadingTask.promise.then(function(pdf) {
       console.log('PDF loaded');
       
-      var pageNumber = 1;
+      var pageNum = 0;
+      var pageNumber = pageNum+1;
       pdf.getPage(pageNumber).then(function(page) {
         console.log('Page loaded');
         
@@ -120,13 +121,14 @@ function displayVersion(scoreId, version) {
           if (down) {
             //console.log("up", e);
             down = false;
+<<<<<<< HEAD
             var offset = $("#highlights").offset();
             var currOffsetX = e.pageX - offset.left;
             var currOffsetY = e.pageY - offset.top;
             var width = Math.abs(mousedownEvent.offsetX - currOffsetX);
             var height = Math.abs(mousedownEvent.offsetY - currOffsetY);
             if (width > 3 && height > 3){
-                  insertCommentChain(scoreId, version.key, 0, dialog);
+                  insertCommentChain(scoreId, version.key, pageNum, dialog);
             };
             dialog = undefined;
           }
@@ -147,7 +149,7 @@ function displayVersion(scoreId, version) {
         renderTask.then(function () {
           console.log('Page rendered');
           $(function () {
-            displayCommentChains(scoreId, version, 0);
+            displayCommentChains(scoreId, version, pageNum);
           });
         });
       });
@@ -173,17 +175,119 @@ function makeHighlightDiv() {
   return $(div);
 }
 
-function makeCommentChainDiv() {
+function makeCommentChainDiv(scoreId, versionId, pageNum, commentChainId) {
   console.log("make comment chain div");
   var div = document.createElement("div");
   div.setAttribute("class", "comment-chain");
   return $(div).dialog({
     title: "Comment by Xin-Xin",
     position: {my: "left center", at: "right center", of: "#pdf-canvas"},
+    buttons: [
+      {
+        text: "+ Music",
+        click: function () {
+          addMusicToCommentChain(scoreId, versionId, pageNum, commentChainId, $(this));
+        }
+      },
+      {
+        text: "+ Text",
+        click: function () {
+          addTextToCommentChain(scoreId, versionId, pageNum, commentChainId, $(this));
+        }
+      }
+    ]
   });
 }
 
-function displayHighlightDiv(commentChain) {
+function addTextToCommentChain(scoreId, versionId, pageNum, commentChainId, commentChainDiv) {
+  var div = document.createElement("div");
+  div.appendChild(document.createElement("hr"));
+  var textarea = document.createElement("textarea");
+  div.appendChild(textarea);
+  var input = document.createElement("input");
+  input.setAttribute("type", "button");
+  input.setAttribute("value", "Submit");
+  $(input).on("click", function () {
+    insertComment(scoreId, versionId, pageNum, commentChainId, div, {
+      username: "anonymous",
+      type: "text",
+      content: $(textarea).val(),
+    });
+  });
+  div.appendChild(input);
+  commentChainDiv.append(div);
+}
+
+function addMusicToCommentChain(scoreId, versionId, pageNum, commentChainId, commentChainDiv) {
+  var div = document.createElement("div");
+  div.appendChild(document.createElement("hr"));
+  var vextabCanvas = document.createElement("canvas");
+  var vextabError = document.createElement("div");
+  var vextabTextarea = document.createElement("textarea");
+  $(vextabTextarea).val(`stave clef=treble key=Bb time=4/4
+notes :4 A/4 B/4 C/4 D/4`);
+  renderVextab(vextabTextarea, vextabCanvas, vextabError);
+  div.appendChild(vextabCanvas);
+  div.appendChild(vextabError);
+  div.appendChild(vextabTextarea);
+  var input = document.createElement("input");
+  input.setAttribute("type", "button");
+  input.setAttribute("value", "Submit");
+  $(input).on("click", function () {
+    insertComment(scoreId, versionId, pageNum, commentChainId, div, {
+      username: "anonymous",
+      type: "music",
+      content: $(vextabTextarea).val(),
+    });
+  });
+  div.appendChild(input);
+  commentChainDiv.append(div);
+}
+
+function renderVextabText(canvas, text) {
+  var Renderer = Vex.Flow.Renderer;
+  // Create VexFlow Renderer from canvas element with id #boo
+  var renderer = new Renderer(canvas, Renderer.Backends.CANVAS);
+  // Initialize VexTab artist and parser.
+  var artist = new VexTabDiv.Artist(10, 10, 600, {scale: 0.8});
+  var vextab = new VexTabDiv.VexTab(artist);
+  try {
+    vextab.parse(text);
+    artist.render(renderer);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+/*
+ * textarea, canvas, error are JS DOM objects
+ */
+function renderVextab(textarea, canvas, error) {
+  var Renderer = Vex.Flow.Renderer;
+  // Create VexFlow Renderer from canvas element with id #boo
+  var renderer = new Renderer(canvas, Renderer.Backends.CANVAS);
+  // Initialize VexTab artist and parser.
+  var artist = new VexTabDiv.Artist(10, 10, 600, {scale: 0.8});
+  var vextab = new VexTabDiv.VexTab(artist);
+  function render() {
+    try {
+      vextab.reset();
+      artist.reset();
+      vextab.parse($(textarea).val());
+      artist.render(renderer);
+      $(error).text("");
+    } catch (e) {
+      console.error(e);
+      $(error).html(e.message.replace(/[\n]/g, '<br/>'));
+    }
+  }
+  $(textarea).on("keyup", function () {
+    render();
+  });
+  render();
+}
+
+function displayHighlightDiv(scoreId, versionId, pageNum, commentChain) {
   console.log("display hightlight div", commentChain);
   var div = makeHighlightDiv();
   div.css({
@@ -192,12 +296,29 @@ function displayHighlightDiv(commentChain) {
     width: commentChain.val().highlightWidth,
     height: commentChain.val().highlightHeight,
   });
+  function updateData() {
+    console.log("update data");
+    var commentChainRef = firebase.database().ref('comment-chains/' + scoreId + '/' + versionId + '/' + pageNum + '/' + commentChain.key)
+    commentChainRef.set({
+      highlightTop: div.css("top"),
+      highlightLeft: div.css("left"),
+      highlightWidth: div.css("width"),
+      highlightHeight: div.css("height"),
+    });
+  }
+
+  div.on("resize", function (e) {
+    updateData();
+  });
+  div.on("drag", function (e) {
+    updateData();
+  });
 }
 
 function displayCommentChain(scoreId, versionId, pageNum, commentChain) {
   console.log("display comment chain", commentChain);
-  displayHighlightDiv(commentChain);
-  var commentChainDiv = makeCommentChainDiv();
+  displayHighlightDiv(scoreId, versionId, pageNum, commentChain);
+  var commentChainDiv = makeCommentChainDiv(scoreId, versionId, pageNum, commentChain.key);
   var commentsRef = firebase.database().ref('comments/' + scoreId + '/' + versionId + '/' + pageNum + '/' + commentChain.key);
   commentsRef.on('child_added', function (comment) {
     displayComment(commentChainDiv, comment);
@@ -205,9 +326,22 @@ function displayCommentChain(scoreId, versionId, pageNum, commentChain) {
 }
 
 function displayComment(commentChainDiv, comment) {
-  var p = document.createElement("p");
-  p.appendChild(document.createTextNode("Yo hey what's up"));
-  commentChainDiv.append(p);
+  if (!commentChainDiv.is(":empty")) commentChainDiv.append(document.createElement("hr"));
+  switch (comment.val().type) {
+    case "text":
+      var p = document.createElement("p");
+      p.appendChild(document.createTextNode(comment.val().content));
+      commentChainDiv.append(p);
+      break;
+    case "music":
+      var vextabCanvas = document.createElement("canvas");
+      renderVextabText(vextabCanvas, comment.val().content);
+      commentChainDiv.append(vextabCanvas);
+      break;
+    default:
+      console.error("Unknown comment type " + comment.val().type);
+      break;
+  }
 }
 
 function displayCommentChains(scoreId, version, pageNum) {
