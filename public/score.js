@@ -32,28 +32,6 @@ function displayScore(scoreId) {
 
 displayScore(paramId);
 
-/*function getScore(id) {
-  console.log("get score", id);
-  return $.Deferred(function (deferred) {
-    deferred.resolve({
-      versions: [
-        {
-          file: "./acappella.pdf",
-          commentChains: [
-            {
-              highlightTop: 25,
-              highlightLeft: 63,
-              highlightWidth: 100,
-              highlightHeight: 100,
-            }
-          ]
-        }
-      ]
-    });
-  });
-}*/
-
-
 function insertCommentChain(scoreId, versionId, pageNum, highlightDiv) {
   console.log("insert comment chain", scoreId, versionId, pageNum, highlightDiv);
   var commentChainsRef = firebase.database().ref('comment-chains/' + scoreId + '/' + versionId + '/' + pageNum);
