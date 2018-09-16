@@ -175,13 +175,13 @@ function makeCommentChainDiv(scoreId, versionId, pageNum, commentChain) {
       {
         text: "+ Music",
         click: function () {
-          addMusicToCommentChain(scoreId, versionId, pageNum, commentChainId, $(this));
+          addMusicToCommentChain(scoreId, versionId, pageNum, commentChain.key, $(this));
         }
       },
       {
         text: "+ Text",
         click: function () {
-          addTextToCommentChain(scoreId, versionId, pageNum, commentChainId, $(this));
+          addTextToCommentChain(scoreId, versionId, pageNum, commentChain.key, $(this));
         }
       }
     ],
@@ -254,6 +254,12 @@ notes :4 A/4 B/4 C/4 D/4`);
   p1.appendChild(vextabTextarea);
   div.appendChild(p1);
   var p2 = document.createElement("p");
+  var a = document.createElement("a");
+  a.setAttribute("href", "./help.html");
+  a.appendChild(document.createTextNode("Help"));
+  p2.appendChild(a);
+  div.appendChild(p2);
+  var p3 = document.createElement("p");
   var input = document.createElement("input");
   input.setAttribute("type", "button");
   input.setAttribute("value", "Submit");
@@ -264,8 +270,8 @@ notes :4 A/4 B/4 C/4 D/4`);
       content: $(vextabTextarea).val(),
     });
   });
-  p2.appendChild(input);
-  div.appendChild(p2);
+  p3.appendChild(input);
+  div.appendChild(p3);
   commentChainDiv.append(div);
 }
 
