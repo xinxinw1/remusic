@@ -57,8 +57,12 @@ function insertCommentChain(scoreId, versionId, pageNum, highlightDiv) {
   highlightDiv.remove();
 }
 
-function insertComment(commentChain, comment) {
-  console.log("insert comment", commentChain, comment);
+function insertComment(scoreId, versionId, pageNum, commentChainId, commentInsertDiv, comment) {
+  console.log("insert comment", scoreId, versionId, pageNum, commentChainId, comment);
+  var commentsRef = firebase.database().ref('comments/' + scoreId + '/' + versionId + '/' + pageNum + '/' + commentChainId);
+  var commentRef = commentsRef.push();
+  commentRef.set(comment);
+  commentInsertDiv.remove();
 }
 
 function displayVersion(scoreId, version) {
@@ -163,14 +167,44 @@ function makeHighlightDiv() {
   return $(div);
 }
 
-function makeCommentChainDiv() {
+function makeCommentChainDiv(scoreId, versionId, pageNum, commentChainId) {
   console.log("make comment chain div");
   var div = document.createElement("div");
   div.setAttribute("class", "comment-chain");
   return $(div).dialog({
     title: "Comment by Xin-Xin",
     position: {my: "left center", at: "right center", of: "#pdf-canvas"},
+    buttons: [
+      {
+        text: "+ Music",
+      },
+      {
+        text: "+ Text",
+        click: function () {
+          addTextToCommentChain(scoreId, versionId, pageNum, commentChainId, $(this));
+        }
+      }
+    ]
   });
+}
+
+function addTextToCommentChain(scoreId, versionId, pageNum, commentChainId, commentChainDiv) {
+  var div = document.createElement("div");
+  div.appendChild(document.createElement("hr"));
+  var textarea = document.createElement("textarea");
+  div.appendChild(textarea);
+  var input = document.createElement("input");
+  input.setAttribute("type", "button");
+  input.setAttribute("value", "Submit");
+  $(input).on("click", function () {
+    insertComment(scoreId, versionId, pageNum, commentChainId, div, {
+      username: "anonymous",
+      type: "text",
+      content: $(textarea).val(),
+    });
+  });
+  div.appendChild(input);
+  commentChainDiv.append(div);
 }
 
 function displayHighlightDiv(scoreId, versionId, pageNum, commentChain) {
@@ -204,7 +238,7 @@ function displayHighlightDiv(scoreId, versionId, pageNum, commentChain) {
 function displayCommentChain(scoreId, versionId, pageNum, commentChain) {
   console.log("display comment chain", commentChain);
   displayHighlightDiv(scoreId, versionId, pageNum, commentChain);
-  var commentChainDiv = makeCommentChainDiv();
+  var commentChainDiv = makeCommentChainDiv(scoreId, versionId, pageNum, commentChain.key);
   var commentsRef = firebase.database().ref('comments/' + scoreId + '/' + versionId + '/' + pageNum + '/' + commentChain.key);
   commentsRef.on('child_added', function (comment) {
     displayComment(commentChainDiv, comment);
@@ -212,8 +246,9 @@ function displayCommentChain(scoreId, versionId, pageNum, commentChain) {
 }
 
 function displayComment(commentChainDiv, comment) {
+  if (!commentChainDiv.is(":empty")) commentChainDiv.append(document.createElement("hr"));
   var p = document.createElement("p");
-  p.appendChild(document.createTextNode("Yo hey what's up"));
+  p.appendChild(document.createTextNode(comment.val().content));
   commentChainDiv.append(p);
 }
 
