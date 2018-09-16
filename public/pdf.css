@@ -1,0 +1,11 @@
+#pdf-canvas {cursor: crosshair;}
+#highlights {position: relative;}
+.highlight {position: absolute !important; background-color: rgba(255, 255, 0, 0.3); cursor: move;}
+.highlight .ui-resizable-n {top: 0;}
+.highlight .ui-resizable-s {bottom: 0;}
+.highlight .ui-resizable-e {right: 0;}
+.highlight .ui-resizable-w {left: 0;}
+.highlight .ui-resizable-se {width: 9px; height: 9px; right: 0; bottom: 0;}
+.highlight .ui-resizable-sw {left: 0; bottom: 0;}
+.highlight .ui-resizable-nw {left: 0; top: 0;}
+.highlight .ui-resizable-ne {right: 0; top: 0;}
