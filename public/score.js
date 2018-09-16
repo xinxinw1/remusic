@@ -177,6 +177,9 @@ function makeCommentChainDiv(scoreId, versionId, pageNum, commentChainId) {
     buttons: [
       {
         text: "+ Music",
+        click: function () {
+          addMusicToCommentChain(scoreId, versionId, pageNum, commentChainId, $(this));
+        }
       },
       {
         text: "+ Text",
@@ -205,6 +208,75 @@ function addTextToCommentChain(scoreId, versionId, pageNum, commentChainId, comm
   });
   div.appendChild(input);
   commentChainDiv.append(div);
+}
+
+function addMusicToCommentChain(scoreId, versionId, pageNum, commentChainId, commentChainDiv) {
+  var div = document.createElement("div");
+  div.appendChild(document.createElement("hr"));
+  var vextabCanvas = document.createElement("canvas");
+  var vextabError = document.createElement("div");
+  var vextabTextarea = document.createElement("textarea");
+  $(vextabTextarea).val(`stave clef=treble key=Bb time=4/4
+notes :4 A/4 B/4 C/4 D/4`);
+  renderVextab(vextabTextarea, vextabCanvas, vextabError);
+  div.appendChild(vextabCanvas);
+  div.appendChild(vextabError);
+  div.appendChild(vextabTextarea);
+  var input = document.createElement("input");
+  input.setAttribute("type", "button");
+  input.setAttribute("value", "Submit");
+  $(input).on("click", function () {
+    insertComment(scoreId, versionId, pageNum, commentChainId, div, {
+      username: "anonymous",
+      type: "music",
+      content: $(vextabTextarea).val(),
+    });
+  });
+  div.appendChild(input);
+  commentChainDiv.append(div);
+}
+
+function renderVextabText(canvas, text) {
+  var Renderer = Vex.Flow.Renderer;
+  // Create VexFlow Renderer from canvas element with id #boo
+  var renderer = new Renderer(canvas, Renderer.Backends.CANVAS);
+  // Initialize VexTab artist and parser.
+  var artist = new VexTabDiv.Artist(10, 10, 600, {scale: 0.8});
+  var vextab = new VexTabDiv.VexTab(artist);
+  try {
+    vextab.parse(text);
+    artist.render(renderer);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+/*
+ * textarea, canvas, error are JS DOM objects
+ */
+function renderVextab(textarea, canvas, error) {
+  var Renderer = Vex.Flow.Renderer;
+  // Create VexFlow Renderer from canvas element with id #boo
+  var renderer = new Renderer(canvas, Renderer.Backends.CANVAS);
+  // Initialize VexTab artist and parser.
+  var artist = new VexTabDiv.Artist(10, 10, 600, {scale: 0.8});
+  var vextab = new VexTabDiv.VexTab(artist);
+  function render() {
+    try {
+      vextab.reset();
+      artist.reset();
+      vextab.parse($(textarea).val());
+      artist.render(renderer);
+      $(error).text("");
+    } catch (e) {
+      console.error(e);
+      $(error).html(e.message.replace(/[\n]/g, '<br/>'));
+    }
+  }
+  $(textarea).on("keyup", function () {
+    render();
+  });
+  render();
 }
 
 function displayHighlightDiv(scoreId, versionId, pageNum, commentChain) {
@@ -247,9 +319,21 @@ function displayCommentChain(scoreId, versionId, pageNum, commentChain) {
 
 function displayComment(commentChainDiv, comment) {
   if (!commentChainDiv.is(":empty")) commentChainDiv.append(document.createElement("hr"));
-  var p = document.createElement("p");
-  p.appendChild(document.createTextNode(comment.val().content));
-  commentChainDiv.append(p);
+  switch (comment.val().type) {
+    case "text":
+      var p = document.createElement("p");
+      p.appendChild(document.createTextNode(comment.val().content));
+      commentChainDiv.append(p);
+      break;
+    case "music":
+      var vextabCanvas = document.createElement("canvas");
+      renderVextabText(vextabCanvas, comment.val().content);
+      commentChainDiv.append(vextabCanvas);
+      break;
+    default:
+      console.error("Unknown comment type " + comment.val().type);
+      break;
+  }
 }
 
 function displayCommentChains(scoreId, version, pageNum) {
