@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload</title>
+    <link href="RemusicStyle.css" media="screen" rel="Stylesheet" type="text/css" />
+</head>
+<body>
+    <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <p>Drag the music score pdf file here</p>
+    </div>
+
+    <div>
+        <input type="text" id="filename" placeholder="Enter the file name" required>
+        <button id="download">Download</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-storage.js"></script>
+
+
+
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyBXZfUvEUcCSOdZBWbw_PMY2XCAEaS9Q94",
+            authDomain: "remusic-cf7bd.firebaseapp.com",
+            databaseURL: "https://remusic-cf7bd.firebaseio.com",
+            projectId: "remusic-cf7bd",
+            storageBucket: "remusic-cf7bd.appspot.com",
+            messagingSenderId: "484094823628"
+        };
+        firebase.initializeApp(config);
+    </script>
+<script>
+    var storageRef = firebase.storage().ref();
+    var database = firebase.database();
+    function dropHandler(ev) {
+        console.log('File(s) dropped');
+
+        ev.preventDefault();
+
+        if (ev.dataTransfer.items) {
+            // DataTransferItemList interface
+            if (ev.dataTransfer.items[0].kind === 'file'){
+                var file = ev.dataTransfer.items[0].getAsFile();
+                var len = file.name.length;
+                var filename = file.name.substring(0,len-4);
+                console.log('score name is ' + filename);
+                var scoreRef = storageRef.child(filename);
+                scoreRef.put(file).then(function(snapshot) {
+                    console.log('Uploaded a file!');
+                });
+
+                var currentTime = new Date().toLocaleDateString();
+                console.log("database");
+                database.ref(filename).set({
+                    versions: [
+                        {
+                            file: file.name,
+                            date: currentTime,
+                            commentChains:[]
+                        }
+                    ]
+                }).then(function(snapshot){
+                    console.log("Data set.")
+                });
+                console.log("done");
+            }
+        }
+        // Pass event to removeDragData for cleanup
+        removeDragData(ev)
+    }
+
+    function dragOverHandler(ev) {
+        console.log('File(s) in drop zone');
+        ev.preventDefault();
+    }
+    function removeDragData(ev) {
+        console.log('Removing drag data')
+
+        if (ev.dataTransfer.items) {
+            ev.dataTransfer.items.clear();
+        } else {
+            ev.dataTransfer.clearData();
+        }
+    }
+
+</script>
+<script>
+    document.getElementById("download").addEventListener("click",function (){
+        var filename = document.getElementById("filename").value;
+        if (filename != ""){
+            console.log(filename);
+            storageRef.child(filename).getDownloadURL().then(function(url) {
+
+                console.log(url);
+            }).catch(function(error) {
+                console.log(error);
+            });
+        }
+
+
+    });
+</script>
+</body>
+</html>

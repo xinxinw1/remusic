@@ -1,10 +1,11 @@
-.highlight {background-color: rgba(255, 255, 0, 0.3); border-radius: 0;}
-.highlight.ui-widget-content {border: 0;}
-/*.highlight .ui-dialog-titlebar {display: none;}*/
-.highlight .ui-dialog-content {display: none !important;}
-.highlight .ui-dialog-titlebar {padding: 0; border: 0; background: transparent; border-radius: 0; height: 100%;}
-.highlight .ui-dialog-titlebar-close {display: none;}
-.highlight .ui-resizable-w, .highlight .ui-resizable-e {width: 7px;}
-.highlight .ui-resizable-n, .highlight .ui-resizable-s {height: 7px;}
-.highlight .ui-resizable-se, .highlight .ui-resizable-sw, .highlight .ui-resizable-ne, .highlight .ui-resizable-nw {width: 10px; height: 10px; z-index: 100 !important;}
-.highlight .ui-icon-gripsmall-diagonal-se {background-image: none;}
+#pdf-canvas {cursor: crosshair;}
+#highlights {position: relative;}
+.highlight {position: absolute !important; background-color: rgba(255, 255, 0, 0.3); cursor: move;}
+.highlight .ui-resizable-n {top: 0;}
+.highlight .ui-resizable-s {bottom: 0;}
+.highlight .ui-resizable-e {right: 0;}
+.highlight .ui-resizable-w {left: 0;}
+.highlight .ui-resizable-se {width: 9px; height: 9px; right: 0; bottom: 0;}
+.highlight .ui-resizable-sw {left: 0; bottom: 0;}
+.highlight .ui-resizable-nw {left: 0; top: 0;}
+.highlight .ui-resizable-ne {right: 0; top: 0;}
