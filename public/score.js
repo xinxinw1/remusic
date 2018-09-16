@@ -189,8 +189,12 @@ function makeCommentChainDiv(scoreId, versionId, pageNum, commentChainId) {
 function addTextToCommentChain(scoreId, versionId, pageNum, commentChainId, commentChainDiv) {
   var div = document.createElement("div");
   div.appendChild(document.createElement("hr"));
+  var p1 = document.createElement("p");
   var textarea = document.createElement("textarea");
-  div.appendChild(textarea);
+  $(textarea).css({width: 250, height: 80});
+  p1.appendChild(textarea)
+  div.appendChild(p1);
+  var p2 = document.createElement("p");
   var input = document.createElement("input");
   input.setAttribute("type", "button");
   input.setAttribute("value", "Submit");
@@ -201,7 +205,8 @@ function addTextToCommentChain(scoreId, versionId, pageNum, commentChainId, comm
       content: $(textarea).val(),
     });
   });
-  div.appendChild(input);
+  p2.appendChild(input)
+  div.appendChild(p2);
   commentChainDiv.append(div);
 }
 
@@ -210,13 +215,17 @@ function addMusicToCommentChain(scoreId, versionId, pageNum, commentChainId, com
   div.appendChild(document.createElement("hr"));
   var vextabCanvas = document.createElement("canvas");
   var vextabError = document.createElement("div");
+  var p1 = document.createElement("p");
   var vextabTextarea = document.createElement("textarea");
+  $(vextabTextarea).css({width: 250, height: 80});
   $(vextabTextarea).val(`stave clef=treble key=Bb time=4/4
 notes :4 A/4 B/4 C/4 D/4`);
   renderVextab(vextabTextarea, vextabCanvas, vextabError);
   div.appendChild(vextabCanvas);
   div.appendChild(vextabError);
-  div.appendChild(vextabTextarea);
+  p1.appendChild(vextabTextarea);
+  div.appendChild(p1);
+  var p2 = document.createElement("p");
   var input = document.createElement("input");
   input.setAttribute("type", "button");
   input.setAttribute("value", "Submit");
@@ -227,7 +236,8 @@ notes :4 A/4 B/4 C/4 D/4`);
       content: $(vextabTextarea).val(),
     });
   });
-  div.appendChild(input);
+  p2.appendChild(input);
+  div.appendChild(p2);
   commentChainDiv.append(div);
 }
 
@@ -236,7 +246,7 @@ function renderVextabText(canvas, text) {
   // Create VexFlow Renderer from canvas element with id #boo
   var renderer = new Renderer(canvas, Renderer.Backends.CANVAS);
   // Initialize VexTab artist and parser.
-  var artist = new VexTabDiv.Artist(10, 10, 300, {scale: 0.8});
+  var artist = new VexTabDiv.Artist(0, 0, 330, {scale: 0.8});
   var vextab = new VexTabDiv.VexTab(artist);
   try {
     vextab.parse(text);
@@ -254,7 +264,7 @@ function renderVextab(textarea, canvas, error) {
   // Create VexFlow Renderer from canvas element with id #boo
   var renderer = new Renderer(canvas, Renderer.Backends.CANVAS);
   // Initialize VexTab artist and parser.
-  var artist = new VexTabDiv.Artist(10, 10, 300, {scale: 0.8});
+  var artist = new VexTabDiv.Artist(0, 0, 330, {scale: 0.8});
   var vextab = new VexTabDiv.VexTab(artist);
   function render() {
     try {
