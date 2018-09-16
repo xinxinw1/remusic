@@ -31,3 +31,8 @@ body {
     margin-bottom: 0;
 	color: white;
 }
+
+scoreFile {
+	padding-left: 90px;
+	padding-bottom: 15px;
+}
