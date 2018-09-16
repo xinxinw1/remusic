@@ -31,12 +31,12 @@
               Upload
             </button></a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./help.html"><button type="button" class="btn btn-dark">Instructions</button></a>
+          </li>
         </ul>
       </div>
     </nav>
-
-    
-
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -58,20 +58,29 @@
         </div>
       </div>
     </div>
-    <div class="vex-tabdiv" width="680" scale="1.0" editor="true" editor_width="680" editor_height="80" style="position: relative;">stave clef=treble key=Bb time=4/4
-notes :4 (Cn/4.E#/4.G@/4) $.a./bottom.$ $Hi$
-notes :16 E##-F@@-G-A/5 $.a-/top.,..,.a>/top.,..$ $Team,Xin-Xin,Sophie,Zack$
-notes :8 DTF-A/4 ^3^ $.a@u/bottom.$ :8d B/4 $.a@a/top.$ :16 ## | :4 A/4 T A/4
-    </div>
-    <br>
-    <p>See <a href="http://my.vexflow.com/articles/134">http://my.vexflow.com/articles/134</a> for instructions on how to use Music Editor</p>
 
-    <table id="scoresDisplay" class="table" style="width: 680px;">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-6">
+      
+    </div>
+    <div class=col-lg-6>
+      <table id="scoresDisplay" class="table" style="width: 680px;">
       <thead class="thead-dark">
         <th scope="col">Scores</th>
       </thead>
       <tbody></tbody>
     </table>
+    </div>
+  </div>
+  <br>
+    <p>See <a href="http://my.vexflow.com/articles/134">http://my.vexflow.com/articles/134</a> for instructions on how to use Music Editor</p>
+</div>
+
+    
+    
+
+    
 
     <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-database.js"></script>

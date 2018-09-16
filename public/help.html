@@ -1,0 +1,39 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<title>Instructions</title>
+	<script src="vextab-div.js"></script>
+  <script>
+    Artist.prototype.origReset = Artist.prototype.reset;
+    Artist.prototype.reset = function () {
+      this.origReset();
+        // see http://my.vexflow.com/articles/53#comment-2117647808
+        this.customizations["beam-rests"] = "false";
+      };
+    </script>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
+      <a class="navbar-brand" href="./index.html">
+        <button class="btn btn-dark"><i class="fas fa-play fa-sm"></i> Re:Music</button>
+      </a>
+      <div class="navbar-expand" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#"><button type="button" class="btn btn-dark" data-toggle="modal" data-target="#exampleModal">
+              Upload
+            </button></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./help.html"><button type="button" class="btn btn-dark">Instructions</button></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+	<div class="vex-tabdiv" width="680" scale="1.0" editor="true" editor_width="680" editor_height="80" style="position: relative;">stave clef=treble key=Bb time=4/4
+notes :4 (Cn/4.E#/4.G@/4) $.a./bottom.$ $Hi$
+notes :16 E##-F@@-G-A/5 $.a-/top.,..,.a>/top.,..$ $Team,Xin-Xin,Sophie,Zack$
+notes :8 DTF-A/4 ^3^ $.a@u/bottom.$ :8d B/4 $.a@a/top.$ :16 ## | :4 A/4 T A/4
+    </div>
+</body>
+</html>
