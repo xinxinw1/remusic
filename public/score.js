@@ -1,10 +1,28 @@
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyBXZfUvEUcCSOdZBWbw_PMY2XCAEaS9Q94",
+  authDomain: "remusic-cf7bd.firebaseapp.com",
+  databaseURL: "https://remusic-cf7bd.firebaseio.com",
+  projectId: "remusic-cf7bd",
+  storageBucket: "remusic-cf7bd.appspot.com",
+  messagingSenderId: "484094823628"
+};
+firebase.initializeApp(config);
+
 var urlParams = new URLSearchParams(location.search);
 
-getScore(urlParams.get('id')).then(function (score) {
-  displayVersion(score.versions[0]);
-});
+var paramId = urlParams.get('id') || 'testid';
 
-function getScore(id) {
+displayVersions(paramId);
+
+function displayVersions(scoreId) {
+  var versionsRef = firebase.database().ref('versions/' + scoreId);
+  versionsRef.on('child_added', function (version) {
+    displayVersion(scoreId, version);
+  });
+}
+
+/*function getScore(id) {
   console.log("get score", id);
   return $.Deferred(function (deferred) {
     deferred.resolve({
@@ -23,26 +41,26 @@ function getScore(id) {
       ]
     });
   });
-}
+}*/
 
-function displayVersion(version) {
-  console.log("display version", version);
-  displayPage(version, 0);
-}
-
-function insertCommentChain(highlightDiv) {
-  console.log("insert comment chain", highlightDiv);
-  return {
-    // comment chain object
-  };
+function insertCommentChain(scoreId, versionId, pageNum, highlightDiv) {
+  console.log("insert comment chain", scoreId, versionId, pageNum, highlightDiv);
+  var commentChainsRef = firebase.database().ref('comment-chains/' + scoreId + '/' + version.key + '/' + pageNum);
+  var commentChainRef = commentChainsRef.push();
+  commentChainRef.set({
+    highlightTop: highlightDiv.css("top"),
+    highlightLeft: highlightDiv.css("left"),
+    highlightWidth: highlightDiv.css("width"),
+    highlightHeight: highlightDiv.css("height"),
+  });
 }
 
 function insertComment(commentChain, comment) {
   console.log("insert comment", commentChain, comment);
 }
 
-function displayPage(version, pageNum) {
-  console.log("display page", version, pageNum);
+function displayVersion(scoreId, version) {
+  console.log("display version", scoreId, version);
   var url = version.file;
 
   // Loaded via <script> tag, create shortcut to access PDF.js exports.
@@ -67,7 +85,7 @@ function displayPage(version, pageNum) {
   loadingTask.promise.then(function(pdf) {
     console.log('PDF loaded');
     
-    var pageNumber = pageNum+1;
+    var pageNumber = 1;
     pdf.getPage(pageNumber).then(function(page) {
       console.log('Page loaded');
       
@@ -113,7 +131,7 @@ function displayPage(version, pageNum) {
       renderTask.then(function () {
         console.log('Page rendered');
         $(function () {
-          displayCommentChains(version.commentChains);
+          displayCommentChains(scoreId, version, 0);
         });
       });
     });
@@ -159,18 +177,26 @@ function displayHighlightDiv(commentChain) {
   });
 }
 
-function displayCommentChain(commentChain) {
+function displayCommentChain(scoreId, versionId, pageNum, commentChain) {
   console.log("display comment chain", commentChain);
   displayHighlightDiv(commentChain);
   var commentChainDiv = makeCommentChainDiv();
+  var commentsRef = firebase.database().ref('comments/' + scoreId + '/' + versionId + '/' + pageNum + '/' + commentChain.key);
+  commentsRef.on('child_added', function (comment) {
+    displayComment(commentChainDiv, comment);
+  });
+}
+
+function displayComment(commentChainDiv, comment) {
   var p = document.createElement("p");
   p.appendChild(document.createTextNode("Yo hey what's up"));
   commentChainDiv.append(p);
 }
 
-function displayCommentChains(commentChains) {
-  console.log("display comment chains", commentChains);
-  commentChains.forEach(function (commentChain) {
-    displayCommentChain(commentChain);
+function displayCommentChains(scoreId, version, pageNum) {
+  console.log("display comment chains", version, pageNum);
+  var commentChainsRef = firebase.database().ref('comment-chains/' + scoreId + '/' + version.key + '/' + pageNum);
+  commentChainsRef.on('child_added', function (commentChain) {
+    displayCommentChain(scoreId, version.key, pageNum, commentChain);
   });
 }
