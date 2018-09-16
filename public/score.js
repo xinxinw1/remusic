@@ -70,7 +70,7 @@ function displayVersion(scoreId, version) {
   var pdfRef = firebase.storage().ref("pdfs/" + scoreId + '/' + version.key + '/' + version.val().file);
   pdfRef.getDownloadURL().then(function (url) {
     console.log("url", url);
-    url = "./acappella.pdf";
+    //url = "./acappella.pdf";
 
     // Loaded via <script> tag, create shortcut to access PDF.js exports.
     var pdfjsLib = window['pdfjs-dist/build/pdf'];
