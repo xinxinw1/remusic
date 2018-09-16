@@ -22,6 +22,7 @@ function displayVersions(scoreId) {
   });
 }
 
+<<<<<<< HEAD
 function displayScore(scoreId) {
   var scoreRef = firebase.database().ref('scores/' + scoreId);
   scoreRef.on('value', function (score) {
@@ -52,6 +53,8 @@ displayScore(paramId);
   });
 }*/
 
+=======
+>>>>>>> 96551c160e0c7684153c78cf99c5d6f7cd7ac948
 function insertCommentChain(scoreId, versionId, pageNum, highlightDiv) {
   console.log("insert comment chain", scoreId, versionId, pageNum, highlightDiv);
   var commentChainsRef = firebase.database().ref('comment-chains/' + scoreId + '/' + versionId + '/' + pageNum);
@@ -130,14 +133,11 @@ function displayVersion(scoreId, version) {
           if (down) {
             //console.log("up", e);
             down = false;
-            var offset = $("#highlights").offset();
-            var currOffsetX = e.pageX - offset.left;
-            var currOffsetY = e.pageY - offset.top;
-            var width = Math.abs(mousedownEvent.offsetX - currOffsetX);
-            var height = Math.abs(mousedownEvent.offsetY - currOffsetY);
-            if (width > 3 && height > 3){
-                  insertCommentChain(scoreId, version.key, pageNum, dialog);
-            };
+            if (Math.abs(e.pageX-mousedownEvent.pageX) > 10 && Math.abs(e.pageY-mousedownEvent.pageY) > 10) {
+              insertCommentChain(scoreId, version.key, pageNum, dialog);
+            } else {
+              dialog.remove();
+            }
             dialog = undefined;
           }
         });
