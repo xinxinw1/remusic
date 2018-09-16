@@ -22,7 +22,7 @@ function displayVersions(scoreId) {
   });
 }
 
-<<<<<<< HEAD
+
 function displayScore(scoreId) {
   var scoreRef = firebase.database().ref('scores/' + scoreId);
   scoreRef.on('value', function (score) {
@@ -53,8 +53,7 @@ displayScore(paramId);
   });
 }*/
 
-=======
->>>>>>> 96551c160e0c7684153c78cf99c5d6f7cd7ac948
+
 function insertCommentChain(scoreId, versionId, pageNum, highlightDiv) {
   console.log("insert comment chain", scoreId, versionId, pageNum, highlightDiv);
   var commentChainsRef = firebase.database().ref('comment-chains/' + scoreId + '/' + versionId + '/' + pageNum);
