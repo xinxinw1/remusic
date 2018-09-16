@@ -7,12 +7,20 @@
 </head>
 <body>
     <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-        <p>Drag one or more files to this Drop Zone ...</p>
+        <p>Drag the music score pdf file here</p>
+    </div>
+
+    <div>
+        <input type="text" id="filename" placeholder="Enter the file name" required>
+        <button id="download">Download</button>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-storage.js"></script>
+
+
 
     <script>
         // Initialize Firebase
@@ -28,50 +36,74 @@
     </script>
 <script>
     var storageRef = firebase.storage().ref();
+    var database = firebase.database();
     function dropHandler(ev) {
         console.log('File(s) dropped');
 
-        // Prevent default behavior (Prevent file from being opened)
         ev.preventDefault();
 
         if (ev.dataTransfer.items) {
-            // Use DataTransferItemList interface to access the file(s)
+            // DataTransferItemList interface
             if (ev.dataTransfer.items[0].kind === 'file'){
                 var file = ev.dataTransfer.items[0].getAsFile();
-                console.log('score name is ' + file.name);
-                var scoreRef = storageRef.child(file.name);
+                var len = file.name.length;
+                var filename = file.name.substring(0,len-4);
+                console.log('score name is ' + filename);
+                var scoreRef = storageRef.child(filename);
                 scoreRef.put(file).then(function(snapshot) {
                     console.log('Uploaded a file!');
                 });
-            }
-        } else {
-            // Use DataTransfer interface to access the file(s)
-            for (var i = 0; i < ev.dataTransfer.files.length; i++) {
-                console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
+
+                var currentTime = new Date().toLocaleDateString();
+                console.log("database");
+                database.ref(filename).set({
+                    versions: [
+                        {
+                            file: file.name,
+                            date: currentTime,
+                            commentChains:[]
+                        }
+                    ]
+                }).then(function(snapshot){
+                    console.log("Data set.")
+                });
+                console.log("done");
             }
         }
-
         // Pass event to removeDragData for cleanup
         removeDragData(ev)
     }
 
     function dragOverHandler(ev) {
         console.log('File(s) in drop zone');
-
-        // Prevent default behavior (Prevent file from being opened)
         ev.preventDefault();
     }
     function removeDragData(ev) {
         console.log('Removing drag data')
 
         if (ev.dataTransfer.items) {
-            // Use DataTransferItemList interface to remove the drag data
             ev.dataTransfer.items.clear();
         } else {
-            // Use DataTransfer interface to remove the drag data
             ev.dataTransfer.clearData();
         }
     }
+
+</script>
+<script>
+    document.getElementById("download").addEventListener("click",function (){
+        var filename = document.getElementById("filename").value;
+        if (filename != ""){
+            console.log(filename);
+            storageRef.child(filename).getDownloadURL().then(function(url) {
+
+                console.log(url);
+            }).catch(function(error) {
+                console.log(error);
+            });
+        }
+
+
+    });
 </script>
 </body>
 </html>
