@@ -121,7 +121,6 @@ function displayVersion(scoreId, version) {
           if (down) {
             //console.log("up", e);
             down = false;
-<<<<<<< HEAD
             var offset = $("#highlights").offset();
             var currOffsetX = e.pageX - offset.left;
             var currOffsetY = e.pageY - offset.top;
