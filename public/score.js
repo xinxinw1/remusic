@@ -22,6 +22,15 @@ function displayVersions(scoreId) {
   });
 }
 
+function displayScore(scoreId) {
+  var scoreRef = firebase.database().ref('scores/' + scoreId);
+  scoreRef.on('value', function (score) {
+    document.title = score.val().title;
+  });
+}
+
+displayScore(paramId);
+
 /*function getScore(id) {
   console.log("get score", id);
   return $.Deferred(function (deferred) {
