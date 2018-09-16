@@ -120,7 +120,14 @@ function displayVersion(scoreId, version) {
           if (down) {
             //console.log("up", e);
             down = false;
-            insertCommentChain(scoreId, version.key, 0, dialog);
+            var offset = $("#highlights").offset();
+            var currOffsetX = e.pageX - offset.left;
+            var currOffsetY = e.pageY - offset.top;
+            var width = Math.abs(mousedownEvent.offsetX - currOffsetX);
+            var height = Math.abs(mousedownEvent.offsetY - currOffsetY);
+            if (width > 3 && height > 3){
+                  insertCommentChain(scoreId, version.key, 0, dialog);
+            };
             dialog = undefined;
           }
         });
