@@ -1,14 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Nav, NavItem, NavLink } from "reactstrap";
 
 const Header = () => (
   <header>
-    <nav>
-      <ul>
-        <li><Link to='/'>Home</Link></li>
-        <li><Link to='/help'>Help</Link></li>
-      </ul>
-    </nav>
+    <Nav tabs>
+      <NavItem>
+        <NavLink tag={Link} to="/">Home</NavLink>
+      </NavItem>
+      <NavItem>
+        <NavLink tag={Link} to="/help">Help</NavLink>
+      </NavItem>
+    </Nav>
   </header>
 )
 
