@@ -1,6 +1,6 @@
 import React from "react";
 import { Jumbotron, Container, Table } from 'reactstrap';
-import "../css/main-page.css";
+import "./Home.css";
 
 const Home = () => (
     <div>
