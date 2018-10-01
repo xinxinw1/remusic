@@ -2,6 +2,7 @@ import React from "react";
 import { firebase } from '../firebase';
 import { Document, Page } from '../react-pdf';
 import "./Score.css";
+import tools from '../tools';
 
 class Highlight extends React.Component {
   render() {
@@ -16,6 +17,29 @@ class Highlight extends React.Component {
   }
 }
 
+class CommentChain extends React.Component {
+  render() {
+    return (
+      <div className="comment-chain" style={{
+        top: this.props.top,
+        left: this.props.left,
+      }}>
+        {this.props.children}
+      </div>
+    )
+  }
+}
+
+class Comment extends React.Component {
+  render() {
+    return (
+      <div className="comment">
+        <p className="comment-username">{this.props.username}</p>
+        <p className="comment-content">{this.props.type} - {this.props.content}</p>
+      </div>
+    )
+  }
+}
 
 class Score extends React.Component {
   constructor(props) {
@@ -111,7 +135,15 @@ class Score extends React.Component {
   }
 
   getHighlightsBounds() {
-    return this.highlightsDiv.current.getBoundingClientRect();
+    var divBounds = this.highlightsDiv.current.getBoundingClientRect();
+    var bodyBounds = document.body.getBoundingClientRect();
+
+    return {
+      top: divBounds.top-bodyBounds.top,
+      left: divBounds.left-bodyBounds.left,
+      width: divBounds.width,
+      height: divBounds.height
+    };
   }
 
   mouseDown(e) {
@@ -122,8 +154,8 @@ class Score extends React.Component {
         mouseDown: true,
         mouseDownX: e.pageX,
         mouseDownY: e.pageY,
-        highlightTop: e.pageY-bounds.y,
-        highlightLeft: e.pageX-bounds.x,
+        highlightTop: e.pageY-bounds.top,
+        highlightLeft: e.pageX-bounds.left,
         highlightWidth: 0,
         highlightHeight: 0
       });
@@ -134,8 +166,8 @@ class Score extends React.Component {
     if (this.state.mouseDown) {
       let bounds = this.getHighlightsBounds();
       this.setState({
-        highlightTop: Math.min(e.pageY, this.state.mouseDownY)-bounds.y,
-        highlightLeft: Math.min(e.pageX, this.state.mouseDownX)-bounds.x,
+        highlightTop: Math.min(e.pageY, this.state.mouseDownY)-bounds.top,
+        highlightLeft: Math.min(e.pageX, this.state.mouseDownX)-bounds.left,
         highlightWidth: Math.abs(e.pageX-this.state.mouseDownX),
         highlightHeight: Math.abs(e.pageY-this.state.mouseDownY)
       });
@@ -169,6 +201,45 @@ class Score extends React.Component {
       )
     });
 
+    let commentChainDivs = Object.keys(this.state.commentChains).map((commentChainId) => {
+      let commentChain = this.state.commentChains[commentChainId];
+      let comments = this.state.comments[commentChainId] || {};
+      console.log(commentChain);
+      let commentDivs = Object.keys(comments).map((commentId) => {
+        let comment = comments[commentId];
+        console.log(comment);
+        return (
+          <Comment
+            key={commentId}
+            content={comment.content}
+            type={comment.type}
+            username={comment.username}
+          />
+        );
+      });
+
+      function makeHrI(i) {
+        return <hr key={i} />;
+      }
+
+      let i = 0;
+      function makeHr() {
+        return makeHrI(i++);
+      }
+
+      let commentDivsWithHr = tools.intersperseFn(commentDivs, makeHr);
+
+      return (
+        <CommentChain
+          key={commentChainId}
+          top={commentChain.commentChainTop}
+          left={commentChain.commentChainLeft}
+        >
+          {commentDivsWithHr}
+        </CommentChain>
+      )
+    });
+
     return (
       <div>
         <div id="highlights" ref={this.highlightsDiv}>
@@ -180,6 +251,7 @@ class Score extends React.Component {
             height={this.state.highlightHeight}
           />
           {highlightDivs}
+          {commentChainDivs}
         </div>
         {pdf}
       </div>

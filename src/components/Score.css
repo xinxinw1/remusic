@@ -1,3 +1,12 @@
 #highlights {position: relative;}
 .highlight {position: absolute; z-index: 1; background-color: rgba(255, 255, 0, 0.3);}
 
+.comment-chain {
+  position: absolute;
+  z-index: 1;
+  border: 1px solid #AAA;
+  padding: 10px;
+  background: #FFF;
+  min-width: 500px;
+  min-height: 200px;
+}
