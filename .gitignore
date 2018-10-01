@@ -3,3 +3,4 @@ firebase-debug.log
 .idea
 .firebase
 node_modules
+dist

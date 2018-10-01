@@ -1,6 +1,6 @@
 import React from "react";
 import { firebase } from '../firebase';
-import PDF from 'react-pdf-js';
+import { Document, Page } from '../react-pdf';
 import "./Score.css";
 
 class Highlight extends React.Component {
@@ -147,11 +147,12 @@ class Score extends React.Component {
       <div
           onMouseDown={(e) => this.mouseDown(e)}
       >
-        <PDF
+        <Document
           file={this.state.file}
-          onDocumentComplete={this.onDocumentComplete}
-          page={this.state.page+1}
-        />
+          onLoadSuccess={this.onDocumentComplete}
+        >
+          <Page pageNumber={this.state.page+1} scale={2.0} />
+        </Document>
       </div>
     );
 
