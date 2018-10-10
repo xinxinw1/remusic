@@ -23,6 +23,10 @@ module.exports = {
         to: 'index.html'
       },
       {
+        from: 'src/favicon.ico',
+        to: 'favicon.ico'
+      },
+      {
         from: 'node_modules/pdfjs-dist/build/pdf.worker.js',
         to: 'pdf.worker.js'
       },
