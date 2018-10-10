@@ -1,0 +1,10 @@
+.dropzone{
+    width: 100%;
+    border : 2px dashed black;
+    text-align: center;
+}
+
+#upload_text{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
