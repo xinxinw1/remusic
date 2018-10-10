@@ -4,9 +4,6 @@
 .comment-chain {
   position: absolute;
   z-index: 1;
-  border: 1px solid #AAA;
-  padding: 10px;
-  background: #FFF;
   min-width: 500px;
   min-height: 200px;
 }

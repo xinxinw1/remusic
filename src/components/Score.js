@@ -3,6 +3,7 @@ import { firebase } from '../firebase';
 import { Document, Page } from '../react-pdf';
 import "./Score.css";
 import tools from '../tools';
+import { Card, CardText, CardBody, CardTitle, Button } from 'reactstrap';
 
 class Highlight extends React.Component {
   render() {
@@ -20,12 +21,14 @@ class Highlight extends React.Component {
 class CommentChain extends React.Component {
   render() {
     return (
-      <div className="comment-chain" style={{
+      <Card className="comment-chain" style={{
         top: this.props.top,
         left: this.props.left,
       }}>
-        {this.props.children}
-      </div>
+        <CardBody>
+          {this.props.children}
+        </CardBody>
+      </Card>
     )
   }
 }
@@ -33,9 +36,9 @@ class CommentChain extends React.Component {
 class Comment extends React.Component {
   render() {
     return (
-      <div className="comment">
-        <p className="comment-username">{this.props.username}</p>
-        <p className="comment-content">{this.props.type} - {this.props.content}</p>
+      <div>
+        <CardTitle>{this.props.username}</CardTitle>
+        <CardText>{this.props.type} - {this.props.content}</CardText>
       </div>
     )
   }
@@ -49,11 +52,16 @@ class Score extends React.Component {
       page: 0,
       mouseDown: false,
       commentChains: {},
-      comments: {}
+      comments: {},
+      scoreWidth: 0,
+      origScoreWidth: 0,
+      pageLoaded: false
     };
     console.log(props);
     this.scoreId = props.match.params.id;
     this.highlightsDiv = React.createRef();
+    this.scoreRef = React.createRef();
+    this.documentRef = null;
     this.displayScore();
     this.displayVersions();
   }
@@ -82,9 +90,10 @@ class Score extends React.Component {
         versionId: version.key,
         file: url,
         page: 0
+      }, () => {
+        this.displayCommentChains();
+        this.displayComments();
       });
-      this.displayCommentChains();
-      this.displayComments();
       //url = "./acappella.pdf";
     });
   }
@@ -93,8 +102,9 @@ class Score extends React.Component {
     console.log("display comment chains", this.state.versionId, this.state.page);
     var commentChainsRef = firebase.database().ref('comment-chains/' + this.scoreId + '/' + this.state.versionId + '/' + this.state.page);
     commentChainsRef.on('value', (commentChains) => {
-      this.setState({commentChains: commentChains.val()});
-      console.log(this.state);
+      this.setState({commentChains: commentChains.val()}, () => {
+        console.log("got comment chains", this.state.commentChains);
+      });
     });
   }
 
@@ -102,14 +112,24 @@ class Score extends React.Component {
     console.log("display comments");
     var commentsRef = firebase.database().ref('comments/' + this.scoreId + '/' + this.state.versionId + '/' + this.state.page);
     commentsRef.on('value', (comments) => {
-      this.setState({comments: comments.val()});
-      console.log(this.state);
+      this.setState({comments: comments.val()}, () => {
+        console.log("got comments", this.state.comments);
+      });
     });
   }
 
   componentDidMount() {
     window.addEventListener('mouseup', (e) => this.mouseUp(e), false);
     window.addEventListener('mousemove', (e) => this.mouseMove(e), false);
+    window.addEventListener('resize', (e) => this.resize());
+    this.resize();
+  }
+
+  resize() {
+    let prefWidth = this.getScoreBounds().width-500;
+    let maxWidth = this.state.origScoreWidth*2;
+    console.log("resize", prefWidth, maxWidth);
+    this.setState({scoreWidth: Math.min(prefWidth, maxWidth)});
   }
 
   mouseUp(e) {
@@ -136,6 +156,18 @@ class Score extends React.Component {
 
   getHighlightsBounds() {
     var divBounds = this.highlightsDiv.current.getBoundingClientRect();
+    var bodyBounds = document.body.getBoundingClientRect();
+
+    return {
+      top: divBounds.top-bodyBounds.top,
+      left: divBounds.left-bodyBounds.left,
+      width: divBounds.width,
+      height: divBounds.height
+    };
+  }
+
+  getScoreBounds() {
+    var divBounds = this.scoreRef.current.getBoundingClientRect();
     var bodyBounds = document.body.getBoundingClientRect();
 
     return {
@@ -174,74 +206,104 @@ class Score extends React.Component {
     }
   }
 
-  render() {
-    let pdf = !this.state.file ? null : (
-      <div
-          onMouseDown={(e) => this.mouseDown(e)}
-      >
-        <Document
-          file={this.state.file}
-          onLoadSuccess={this.onDocumentComplete}
-        >
-          <Page pageNumber={this.state.page+1} scale={2.0} />
-        </Document>
-      </div>
-    );
-
-    let highlightDivs = Object.keys(this.state.commentChains).map((commentChainId) => {
-      let commentChain = this.state.commentChains[commentChainId];
-      return (
-        <Highlight
-          key={commentChainId}
-          top={commentChain.highlightTop}
-          left={commentChain.highlightLeft}
-          width={commentChain.highlightWidth}
-          height={commentChain.highlightHeight}
-        />
-      )
+  onPageLoad(page) {
+    console.log("page load", page);
+    this.setState({
+      pageLoaded: true,
+      origScoreWidth: page.originalWidth
+    }, () => {
+      this.resize();
     });
+  }
 
-    let commentChainDivs = Object.keys(this.state.commentChains).map((commentChainId) => {
-      let commentChain = this.state.commentChains[commentChainId];
-      let comments = this.state.comments[commentChainId] || {};
-      console.log(commentChain);
-      let commentDivs = Object.keys(comments).map((commentId) => {
-        let comment = comments[commentId];
-        console.log(comment);
+  getScale() {
+    return this.state.scoreWidth / this.state.origScoreWidth;
+  }
+
+  render() {
+    let pdf = null;
+    if (this.state.file) {
+      pdf = (
+        <div
+            onMouseDown={(e) => this.mouseDown(e)}
+        >
+          <Document
+            file={this.state.file}
+            onLoadSuccess={this.onDocumentComplete}
+          >
+            <Page
+              pageNumber={this.state.page+1}
+              inputRef={(ref) => {this.documentRef = ref;}}
+              onLoadSuccess={(page) => this.onPageLoad(page)}
+              width={this.state.scoreWidth}
+            />
+          </Document>
+        </div>
+      );
+    }
+
+    let highlightDivs = [];
+    let commentChainDivs = [];
+
+    console.log("score ref", this.scoreRef.current);
+
+    if (this.scoreRef.current && this.state.pageLoaded) {
+      let scoreBounds = this.getScoreBounds();
+      console.log("score bounds", scoreBounds);
+
+      highlightDivs = Object.keys(this.state.commentChains).map((commentChainId) => {
+        let commentChain = this.state.commentChains[commentChainId];
         return (
-          <Comment
-            key={commentId}
-            content={comment.content}
-            type={comment.type}
-            username={comment.username}
+          <Highlight
+            key={commentChainId}
+            top={commentChain.highlightTop}
+            left={commentChain.highlightLeft}
+            width={commentChain.highlightWidth}
+            height={commentChain.highlightHeight}
           />
-        );
+        )
       });
 
-      function makeHrI(i) {
-        return <hr key={i} />;
-      }
+      commentChainDivs = Object.keys(this.state.commentChains).map((commentChainId) => {
+        let commentChain = this.state.commentChains[commentChainId];
+        let comments = this.state.comments[commentChainId] || {};
+        let commentDivs = Object.keys(comments).map((commentId) => {
+          let comment = comments[commentId];
+          return (
+            <Comment
+              key={commentId}
+              content={comment.content}
+              type={comment.type}
+              username={comment.username}
+            />
+          );
+        });
 
-      let i = 0;
-      function makeHr() {
-        return makeHrI(i++);
-      }
+        function makeHrI(i) {
+          return <hr key={i} />;
+        }
 
-      let commentDivsWithHr = tools.intersperseFn(commentDivs, makeHr);
+        let i = 0;
+        function makeHr() {
+          return makeHrI(i++);
+        }
 
-      return (
-        <CommentChain
-          key={commentChainId}
-          top={commentChain.commentChainTop}
-          left={commentChain.commentChainLeft}
-        >
-          {commentDivsWithHr}
-        </CommentChain>
-      )
-    });
+        let commentDivsWithHr = tools.intersperseFn(commentDivs, makeHr);
+
+        return (
+          <CommentChain
+            key={commentChainId}
+            top={commentChain.commentChainTop}
+            left={scoreBounds.left + this.state.scoreWidth}
+          >
+            {commentDivsWithHr}
+          </CommentChain>
+        )
+      });
+    }
 
     return (
-      <div>
+      <div ref={this.scoreRef}>
         <div id="highlights" ref={this.highlightsDiv}>
           <Highlight
             key="next"
