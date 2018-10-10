@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Nav, NavItem, NavLink, Navbar, NavbarBrand, Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { Nav, NavItem, NavLink, Navbar, NavbarBrand, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
 import Dropzone from 'react-dropzone'
@@ -34,7 +34,7 @@ class Header extends React.Component {
         <NavbarBrand href="/"><FontAwesomeIcon icon={faPlay} size="sm" />  Re:Music</NavbarBrand>
         <Nav className="ml-auto" navbar>
           <NavItem>
-            <NavLink tag={Link} to="" onClick={()=>this.toggle()}><Button color="secondary" size="sm">Add New Score</Button></NavLink>
+            <NavLink tag={Link} to=""  onClick={()=>this.toggle()}><Button className={'white'}>Add New Score</Button></NavLink>
           </NavItem>
           <NavItem>
             <NavLink tag={Link} to="/help"><Button className={'white'}>Instructions</Button></NavLink>
