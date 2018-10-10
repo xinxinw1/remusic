@@ -5,6 +5,7 @@ import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import firebase from "../firebase/firebase";
 
+
 class Home extends React.Component {
   constructor(props) {
     super(props);
