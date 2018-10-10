@@ -9,7 +9,7 @@ const Header = () => (
         <NavbarBrand href="/"><FontAwesomeIcon icon={faPlay} size="sm"/>  Re:Music</NavbarBrand>
         <Nav className="ml-auto" navbar>
           <NavItem>
-            <NavLink tag={Link} to="/"><Button color="secondary" size="sm">Add New Score</Button></NavLink>
+            <NavLink tag={Link} to="/score"><Button color="secondary" size="sm">Add New Score</Button></NavLink>
           </NavItem>
           <NavItem>
             <NavLink tag={Link} to="/help"><Button color="secondary" size="sm">Instructions</Button></NavLink>

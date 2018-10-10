@@ -10,20 +10,25 @@ let string = 'stave clef=treble key=Bb time=4/4\n' +
     'notes :8 DTF-A/4 ^3^ $.a@u/bottom.$ :8d B/4 $.a@a/top.$ :16 ## | :4 A/4 T A/4';
 
 class Help extends React.Component {
+
     constructor(props) {
         super(props);
     }
 
     render(){
+
         return (
+
           <Container fluid className="center-help">
             <div className="vex-tabdiv" width="680" scale="1.0" editor="true" editor_width="680" editor_height="110" style={{position: "relative"}}>
               {string}
             </div>
             <p id="help">See <a href="http://my.vexflow.com/articles/134">this link</a> for instructions on how to use Music Editor</p>
           </Container>
+
         );
     }
+
 }
 
 export default Help
