@@ -1,22 +1,42 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Nav, NavItem, NavLink, Navbar, NavbarBrand} from "reactstrap";
+
+import { Nav, NavItem, NavLink, Navbar, NavbarBrand, Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlay } from '@fortawesome/free-solid-svg-icons'
+import { faPlay, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
+import Dropzone from 'react-dropzone'
+import "./Header.css";
+import { firebase } from '../firebase';
 import Button from '@material-ui/core/Button';
-import './Header.css';
-
-
 
 class Header extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      modal: false
+    };
+  }
 
-    render() {
-      return(
+  toggle(){
+    this.setState({
+      modal: !this.state.modal
+    });
+  }
+
+  upload(acceptedFiles, rejectedFiles) {
+    console.log("received");
+  }
+  
+
+  render() {
+    return (
+    <div>
       <Navbar color="dark" dark expand="md">
-        <NavbarBrand tag={Link} to="/"><FontAwesomeIcon icon={faPlay} size="sm"/> Re:Music</NavbarBrand>
+        <NavbarBrand href="/"><FontAwesomeIcon icon={faPlay} size="sm" />  Re:Music</NavbarBrand>
         <Nav className="ml-auto" navbar>
           <NavItem>
-            <NavLink tag={Link} to="/score"><Button className={'white'}>Add New Score</Button></NavLink>
+            <NavLink tag={Link} to="" onClick={()=>this.toggle()}><Button color="secondary" size="sm">Add New Score</Button></NavLink>
+
           </NavItem>
           <NavItem>
             <NavLink tag={Link} to="/help"><Button className={'white'}>Instructions</Button></NavLink>
@@ -25,6 +45,23 @@ class Header extends React.Component {
       </Navbar>
       );
     }
+}
+
+      <Modal isOpen={this.state.modal} toggle={()=>this.toggle()} >
+          <ModalHeader toggle={()=>this.toggle()}>Upload Score</ModalHeader>
+          <ModalBody>
+            <Dropzone onDrop={(acceptedFiles, rejectedFiles)=>this.upload(acceptedFiles,rejectedFiles)} className="dropzone">
+              <p id="upload_text"><FontAwesomeIcon icon={faCloudUploadAlt} size="sm" />Drag the music score pdf file here</p>
+            </Dropzone>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={()=>this.toggle()}>Cancel</Button>
+          </ModalFooter>
+        </Modal>
+    </div>
+    );
+
+  }
 }
 
 
