@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
 import { Nav, NavItem, NavLink, Navbar, NavbarBrand, Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay, faCloudUploadAlt } from '@fortawesome/free-solid-svg-icons'
@@ -36,17 +35,12 @@ class Header extends React.Component {
         <Nav className="ml-auto" navbar>
           <NavItem>
             <NavLink tag={Link} to="" onClick={()=>this.toggle()}><Button color="secondary" size="sm">Add New Score</Button></NavLink>
-
           </NavItem>
           <NavItem>
             <NavLink tag={Link} to="/help"><Button className={'white'}>Instructions</Button></NavLink>
           </NavItem>
         </Nav>
       </Navbar>
-      );
-    }
-}
-
       <Modal isOpen={this.state.modal} toggle={()=>this.toggle()} >
           <ModalHeader toggle={()=>this.toggle()}>Upload Score</ModalHeader>
           <ModalBody>
@@ -63,7 +57,6 @@ class Header extends React.Component {
 
   }
 }
-
 
 
 export default Header
