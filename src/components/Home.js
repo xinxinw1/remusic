@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Jumbotron, Container, Table } from 'reactstrap';
 import "./Home.css";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
@@ -13,8 +14,24 @@ class Home extends React.Component {
     this.state = {
       scores: {}
     };
-    this.displayScore();
+
+    this.scoreRef = firebase.database().ref('scores');
+
+    this.setScores = this.setScores.bind(this);
   }
+
+  setScores(scores) {
+    this.setState({scores: scores.val()});
+  }
+
+  componentDidMount() {
+    this.scoreRef.on('value', this.setScores);
+  }
+
+  componentWillUnmount() {
+    this.scoreRef.off('value', this.setScores);
+  }
+    
   render() {
     let scoreId = this.generateRows();
     return (
@@ -44,17 +61,13 @@ class Home extends React.Component {
       </div>)
     }
     displayScore() {
-      var scoreRef = firebase.database().ref('scores');
-      scoreRef.on('value', (scores) => {
-        this.setState({scores: scores.val()});
-      });
     }
 
     generateRows() {
       return Object.keys(this.state.scores).map((scoreId) => {
         let url = "/score/" + scoreId;
         return <tr key={scoreId}>
-          <td><a href={url}>{this.state.scores[scoreId].title}</a></td>
+          <td><Link to={url}>{this.state.scores[scoreId].title}</Link></td>
           </tr>;
       });
     }
