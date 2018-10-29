@@ -9,10 +9,10 @@ class TestHighlightOverlay extends React.Component {
     this.state = {
       highlights: []
     };
-    this.onComplete = this.onComplete.bind(this);
+    this.onInsertHighlight = this.onInsertHighlight.bind(this);
   }
     
-  onComplete(bounds) {
+  onInsertHighlight(bounds) {
     console.log('highlightable', bounds);
     this.setState((state) => ({
       highlights: state.highlights.concat([bounds])
@@ -22,7 +22,7 @@ class TestHighlightOverlay extends React.Component {
   render() {
     return (
       <HighlightOverlay
-        onComplete={this.onComplete}
+        onInsertHighlight={this.onInsertHighlight}
         highlights={this.state.highlights}
       >
         <div style={{
