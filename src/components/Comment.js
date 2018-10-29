@@ -3,6 +3,7 @@ import "./Comment.css";
 
 import { VexTab } from './VexTab';
 import { Card, CardText, CardBody, CardTitle, Button } from 'reactstrap';
+import tools from '../tools';
 
 const defaultMusic = `stave clef=treble key=Bb time=4/4
 notes :4 A/4 B/4 C/4 D/4`;
@@ -60,6 +61,27 @@ class CommentChain extends React.Component {
   }
 
   render() {
+    let comments = this.props.comments.map(comment => {
+      return (
+        <Comment
+          key={comment.key}
+          username={comment.username}
+          type={comment.type}
+          content={comment.content}
+        />
+      );
+    });
+    function makeHrI(i) {
+      return <hr key={i} />;
+    }
+
+    let i = 0;
+    function makeHr() {
+      return makeHrI(i++);
+    }
+
+    let commentsWithHr = tools.intersperseFn(comments, makeHr);
+
     let buttons = (
       <React.Fragment>
         <Button onClick={this.startInsertMusic}>+ Music</Button>{' '}
@@ -112,7 +134,8 @@ class CommentChain extends React.Component {
         style={{top: this.props.top}}
       >
         <CardBody>
-          {this.props.children}
+          {commentsWithHr}
+          <hr />
           {insertArea}
           {buttons}
         </CardBody>
@@ -150,10 +173,9 @@ class CommentColumn extends React.Component {
         <CommentChain
           key={commentChain.key}
           top={commentChain.top}
+          comments={commentChain.comments}
           onSubmit={(type, content) => this.props.onSubmit(commentChain.key, type, content)}
-        >
-          {comments}
-        </CommentChain>
+        />
       );
     });
     return (
