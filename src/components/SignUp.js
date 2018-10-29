@@ -77,7 +77,7 @@ class SignUpForm extends Component {
 
     return (
         <BodyClass className="body--signup">
-        <Card className={"card"}>
+        <Card className={"signupcard"}>
           <CardContent>
             <br/>
             <Typography variant="h2" component="h2" className={"root"}>
