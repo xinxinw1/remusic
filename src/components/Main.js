@@ -5,6 +5,7 @@ import Help from "./Help"
 import Test from "./Test"
 import Score from "./Score"
 import SignUp from "./SignUp";
+import SignIn from "./SignIn";
 
 const Main = () => (
   <main>
@@ -14,6 +15,7 @@ const Main = () => (
       <Route path='/test' component={Test} />
       <Route path='/score/:id' component={Score} />
       <Route path='/signup' component={SignUp} />
+      <Route path='/signin' component={SignIn} />
     </Switch>
   </main>
 );

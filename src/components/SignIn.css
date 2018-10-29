@@ -1,0 +1,22 @@
+.root {
+  text-align: center;
+}
+
+.signincard {
+  margin: 20px auto;
+  display: block;
+  width: 35vw;
+  height: 39vw;
+}
+
+.button {
+  padding-left: 39% !important;
+}
+
+.body--signin {
+  background: #AA076B;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to left, #61045F, #AA076B);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #61045F, #AA076B); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  height: 500px;
+  margin-bottom: 0px;
+}

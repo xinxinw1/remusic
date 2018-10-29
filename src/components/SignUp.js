@@ -144,7 +144,7 @@ class SignUpForm extends Component {
           </CardActions>
           <CardContent className={"root"}>
             <p>
-              Have an account? <Link to={routes.signup}>Sign Up</Link>
+              Don't Have an account? <Link to="/signup">Sign Up</Link>
             </p>
           </CardContent>
         </Card>
