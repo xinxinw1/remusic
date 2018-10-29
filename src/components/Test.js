@@ -1,6 +1,7 @@
 import React from "react";
 import { HighlightOverlay } from './Highlight';
 import { CommentColumn } from './Comment';
+import BodyClass from './BodyClass';
 
 class TestHighlightOverlay extends React.Component {
   constructor(props) {
@@ -89,10 +90,12 @@ class TestCommentColumn extends React.Component {
 }
 
 const Test = () => (
-  <div>
-    <TestHighlightOverlay />
-    <TestCommentColumn />
-  </div>
+  <BodyClass className="a b c">
+    <div>
+      <TestHighlightOverlay />
+      <TestCommentColumn />
+    </div>
+  </BodyClass>
 );
 
 export default Test
