@@ -1,0 +1,10 @@
+.comment-column {
+  position: relative;
+  z-index: 1;
+}
+.comment-column .comment-chain {
+  position: absolute;
+  z-index: 1;
+  min-width: 500px;
+  min-height: 200px;
+}

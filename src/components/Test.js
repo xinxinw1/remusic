@@ -1,0 +1,98 @@
+import React from "react";
+import { HighlightOverlay } from './Highlight';
+import { CommentColumn } from './Comment';
+
+class TestHighlightOverlay extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      highlights: []
+    };
+    this.onComplete = this.onComplete.bind(this);
+  }
+    
+  onComplete(bounds) {
+    console.log('highlightable', bounds);
+    this.setState((state) => ({
+      highlights: state.highlights.concat([bounds])
+    }));
+  }
+
+  render() {
+    return (
+      <HighlightOverlay
+        onComplete={this.onComplete}
+        highlights={this.state.highlights}
+      >
+        <div style={{
+          height: 500,
+          backgroundColor: "#CCC"
+        }}>
+        </div>
+      </HighlightOverlay>
+    )
+  }
+}
+
+class TestCommentColumn extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      commentChains: [
+        {
+          key: "chain1",
+          top: 5,
+          comments: [
+            {
+              key: "comment1",
+              username: "hey",
+              type: "text",
+              content: "what"
+            },
+            {
+              key: "comment2",
+              username: "yo",
+              type: "text",
+              content: "whoa"
+            }
+          ]
+        },
+        {
+          key: "chain2",
+          top: 100,
+          comments: [
+            {
+              key: "comment1",
+              username: "hey",
+              type: "text",
+              content: "what"
+            },
+            {
+              key: "comment2",
+              username: "yo",
+              type: "text",
+              content: "whoa"
+            }
+          ]
+        }
+      ]
+    };
+  }
+
+  render() {
+    return (
+      <CommentColumn
+        commentChains={this.state.commentChains}
+      />
+    )
+  }
+}
+
+const Test = () => (
+  <div>
+    <TestHighlightOverlay />
+    <TestCommentColumn />
+  </div>
+);
+
+export default Test
