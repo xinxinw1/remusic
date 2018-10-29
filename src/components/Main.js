@@ -4,6 +4,7 @@ import Home from "./Home"
 import Help from "./Help"
 import Test from "./Test"
 import Score from "./Score"
+import SignUp from "./SignUp";
 
 const Main = () => (
   <main>
@@ -12,8 +13,12 @@ const Main = () => (
       <Route path='/help' component={Help} />
       <Route path='/test' component={Test} />
       <Route path='/score/:id' component={Score} />
+      <Route path='/signup' component={SignUp} />
     </Switch>
   </main>
-)
+);
+
+export const home = '/';
+export const signup = '/signup';
 
 export default Main
