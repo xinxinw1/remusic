@@ -14,16 +14,25 @@ class CommentChain extends React.Component {
       type: "",
       content: ""
     };
+    this.startInsertMusic = this.startInsertMusic.bind(this);
+    this.startInsertText = this.startInsertText.bind(this);
     this.onMusicValueChange = this.onMusicValueChange.bind(this);
     this.onTextValueChange = this.onTextValueChange.bind(this);
+    this.submitComment = this.submitComment.bind(this);
+    this.cancelComment = this.cancelComment.bind(this);
   }
 
-  startInsert(e, type) {
-    e.preventDefault();
-    let defaultValue = type == "music" ? defaultMusic : "";
+  startInsertMusic(e) {
     this.setState({
-      type: type,
-      content: defaultValue
+      type: "music",
+      content: defaultMusic
+    });
+  }
+
+  startInsertText(e) {
+    this.setState({
+      type: "text",
+      content: ""
     });
   }
 
@@ -40,18 +49,21 @@ class CommentChain extends React.Component {
   }
 
   submitComment(e) {
-
+    this.props.onSubmit(this.state.type, this.state.content);
   }
 
   cancelComment(e) {
-
+    this.setState({
+      type: "",
+      content: ""
+    });
   }
 
   render() {
     let buttons = (
       <React.Fragment>
-        <Button onClick={e => this.startInsert(e, "music")}>+ Music</Button>{' '}
-        <Button onClick={e => this.startInsert(e, "text")}>+ Text</Button>
+        <Button onClick={this.startInsertMusic}>+ Music</Button>{' '}
+        <Button onClick={this.startInsertText}>+ Text</Button>
       </React.Fragment>
     );
     if (this.state.type) {
@@ -74,14 +86,24 @@ class CommentChain extends React.Component {
       )
     } else if (this.state.type == "text") {
       insertBox = (
-        <p>
         <textarea
           style={{width: 250, height: 80}}
           value={this.state.content}
           onChange={this.onTextValueChange}
         />
-        </p>
       )
+    }
+
+    let insertArea = null;
+    if (this.state.type) {
+      insertArea = (
+        <React.Fragment>
+          <CardTitle>curr_username</CardTitle>
+          <div className="insert-area">
+            {insertBox}
+          </div>
+        </React.Fragment>
+      );
     }
 
     return (
@@ -91,7 +113,7 @@ class CommentChain extends React.Component {
       >
         <CardBody>
           {this.props.children}
-          {insertBox}
+          {insertArea}
           {buttons}
         </CardBody>
       </Card>
@@ -128,6 +150,7 @@ class CommentColumn extends React.Component {
         <CommentChain
           key={commentChain.key}
           top={commentChain.top}
+          onSubmit={(type, content) => this.props.onSubmit(commentChain.key, type, content)}
         >
           {comments}
         </CommentChain>

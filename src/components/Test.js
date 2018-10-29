@@ -80,10 +80,15 @@ class TestCommentColumn extends React.Component {
     };
   }
 
+  onSubmit(commentChainKey, type, content) {
+    console.log('submit comment', commentChainKey, type, content);
+  }
+
   render() {
     return (
       <CommentColumn
         commentChains={this.state.commentChains}
+        onSubmit={this.onSubmit}
       />
     )
   }
