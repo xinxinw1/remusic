@@ -34,6 +34,9 @@ class Header extends React.Component {
         <NavbarBrand tag={Link} to="/"><FontAwesomeIcon icon={faPlay} size="sm" />  Re:Music</NavbarBrand>
         <Nav className="ml-auto" navbar>
           <NavItem>
+            <NavLink tag={Link} to="/signup"><Button className={'white'}>Sign Up</Button></NavLink>
+          </NavItem>
+          <NavItem>
             <NavLink onClick={()=>this.toggle()}><Button className={'white'}>Add New Score</Button></NavLink>
           </NavItem>
           <NavItem>
