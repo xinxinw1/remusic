@@ -1,3 +1,6 @@
+.score-table {border-collapse: collapse;}
+.score-table td {vertical-align: top;}
+
 #highlights {position: relative;}
 .highlight {position: absolute; z-index: 1; background-color: rgba(255, 255, 0, 0.3);}
 

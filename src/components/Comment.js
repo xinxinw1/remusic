@@ -1,7 +1,7 @@
 import React from "react";
 import "./Comment.css";
 
-import { VexTab } from './VexTab';
+import { VexTab, VexTabEditor } from './VexTab';
 import { Card, CardText, CardBody, CardTitle, Button } from 'reactstrap';
 import tools from '../tools';
 
@@ -51,6 +51,7 @@ class CommentChain extends React.Component {
 
   submitComment(e) {
     this.props.onSubmit(this.state.type, this.state.content);
+    this.cancelComment(e);
   }
 
   cancelComment(e) {
@@ -61,26 +62,18 @@ class CommentChain extends React.Component {
   }
 
   render() {
-    let comments = this.props.comments.map(comment => {
-      return (
+    let commentsWithHr = this.props.comments.flatMap(comment => {
+      return [
         <Comment
           key={comment.key}
           username={comment.username}
           type={comment.type}
           content={comment.content}
-        />
-      );
+        />,
+        <hr key={comment.key + "-hr"} />
+      ];
     });
-    function makeHrI(i) {
-      return <hr key={i} />;
-    }
-
-    let i = 0;
-    function makeHr() {
-      return makeHrI(i++);
-    }
-
-    let commentsWithHr = tools.intersperseFn(comments, makeHr);
+    commentsWithHr.pop();
 
     let buttons = (
       <React.Fragment>
@@ -99,8 +92,10 @@ class CommentChain extends React.Component {
     let insertBox = null;
     if (this.state.type == "music") {
       insertBox = (
-        <VexTab
-          width={250}
+        <VexTabEditor
+          width={330}
+          scale={0.8}
+          editorWidth={250}
           editorHeight={80}
           value={this.state.content}
           onValueChange={this.onMusicValueChange}
@@ -120,7 +115,7 @@ class CommentChain extends React.Component {
     if (this.state.type) {
       insertArea = (
         <React.Fragment>
-          <CardTitle>curr_username</CardTitle>
+          <CardTitle>{this.props.username}</CardTitle>
           <div className="insert-area">
             {insertBox}
           </div>
@@ -146,10 +141,20 @@ class CommentChain extends React.Component {
 
 class Comment extends React.Component {
   render() {
+    let content = this.props.content;
+    if (this.props.type == "music") {
+      content = (
+        <VexTab
+          width={330}
+          scale={0.8}
+          value={this.props.content}
+        />
+      )
+    }
     return (
       <React.Fragment>
         <CardTitle>{this.props.username}</CardTitle>
-        <CardText>{this.props.type} - {this.props.content}</CardText>
+        <CardText>{content}</CardText>
       </React.Fragment>
     )
   }
@@ -173,6 +178,7 @@ class CommentColumn extends React.Component {
         <CommentChain
           key={commentChain.key}
           top={commentChain.top}
+          username={this.props.username}
           comments={commentChain.comments}
           onSubmit={(type, content) => this.props.onSubmit(commentChain.key, type, content)}
         />

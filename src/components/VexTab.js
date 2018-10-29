@@ -2,17 +2,13 @@ import React from "react";
 import vextab from '../vextab';
 import './VexTab.css';
 
-// props: value, width, editorWidth, editorHeight, scale, onValueChange
+// props: width, scale, value, onRender
 class VexTab extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      error: null
-    };
     this.canvasRef = React.createRef();
-    this.errorRef = React.createRef();
   }
-  
+
   componentDidMount() {
     this.rerenderVexTab();
   }
@@ -23,26 +19,18 @@ class VexTab extends React.Component {
     }
   }
 
-  getValue() {
-    return this.props.value;
-  }
-
   getWidth() {
     return this.props.width || 680;
   }
 
-  getEditorWidth() {
-    return this.props.editorWidth || this.props.width || 680;
-  }
-
-  getEditorHeight() {
-    return this.props.editorHeight || 110;
+  getScale() {
+    return this.props.scale || 1.0;
   }
 
   rerenderVexTab() {
     console.log("rerender vextab");
     var width = this.getWidth();
-    var scale = this.props.scale || 1.0;
+    var scale = this.getScale();
     var Renderer = vextab.Flow.Renderer;
     // Create VexFlow Renderer from canvas element with id #boo
     var renderer = new Renderer(this.canvasRef.current, Renderer.Backends.CANVAS);
@@ -54,11 +42,38 @@ class VexTab extends React.Component {
       artist.reset();
       vextabObj.parse(this.props.value);
       artist.render(renderer);
-      this.setState({error: ""});
+      if (this.props.onRender) this.props.onRender(null);
     } catch (e) {
-      console.error(e);
-      this.setState({error: e.message.replace(/\n/g, '<br />')});
+      console.error('vextab error', e);
+      if (this.props.onRender) this.props.onRender(e);
     }
+  }
+
+  render() {
+    return (
+      <canvas className="vextab-canvas" ref={this.canvasRef}>
+      </canvas>
+    );
+  }
+}
+
+
+// props: value, width, editorWidth, editorHeight, scale, onValueChange
+class VexTabEditor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      error: null
+    };
+    this.onRender = this.onRender.bind(this);
+  }
+
+  getEditorWidth() {
+    return this.props.editorWidth || 680;
+  }
+
+  getEditorHeight() {
+    return this.props.editorHeight || 110;
   }
 
   onChange(e) {
@@ -66,6 +81,13 @@ class VexTab extends React.Component {
     this.props.onValueChange(e.target.value);
   }
 
+  onRender(e) {
+    if (e) {
+      this.setState({error: e.message.replace(/\n/g, '<br />')});
+    } else {
+      this.setState({error: ""});
+    }
+  }
 
   render() {
     console.log("render");
@@ -74,18 +96,20 @@ class VexTab extends React.Component {
       error = (
         <div
           className="vextab-error"
-          ref={this.errorRef}
-          dangerouslySetInnerHTML={{__html: this.state.error}}></div>
+          dangerouslySetInnerHTML={{__html: this.state.error}}
+        ></div>
       );
     }
 
     return (
       <div>
         <div>
-          <canvas
-            className="vextab-canvas"
-            ref={this.canvasRef}
-          ></canvas>
+          <VexTab
+            width={this.props.width}
+            scale={this.props.scale}
+            value={this.props.value}
+            onRender={this.onRender}
+          />
         </div>
         <div>
           <textarea
@@ -117,12 +141,12 @@ class VexTabStateful extends React.Component {
   
   render() {
     return (
-      <VexTab
+      <VexTabEditor
         value={this.state.value}
         width={this.props.width}
+        scale={this.props.scale}
         editorWidth={this.props.editorWidth}
         editorHeight={this.props.editorHeight}
-        scale={this.props.scale}
         onValueChange={this.onValueChange}
       />
     );
@@ -131,5 +155,6 @@ class VexTabStateful extends React.Component {
 
 export {
   VexTab,
+  VexTabEditor,
   VexTabStateful
 };

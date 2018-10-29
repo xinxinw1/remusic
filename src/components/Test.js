@@ -22,7 +22,7 @@ class TestHighlightOverlay extends React.Component {
   render() {
     return (
       <HighlightOverlay
-        onInsertHighlight={this.onInsertHighlight}
+        onInsert={this.onInsertHighlight}
         highlights={this.state.highlights}
       >
         <div style={{

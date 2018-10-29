@@ -61,7 +61,7 @@ class Highlightable extends React.Component {
   mouseUp(e) {
     if (this.state.highlightWidth > 10 &&
         this.state.highlightHeight > 10) {
-      this.props.onInsertHighlight({
+      this.props.onInsert({
         top: this.state.highlightTop,
         left: this.state.highlightLeft,
         width: this.state.highlightWidth,
@@ -137,7 +137,7 @@ const HighlightOverlay = (props) => {
     />
   ));
   return (
-    <Highlightable onInsertHighlight={props.onInsertHighlight}>
+    <Highlightable onInsert={props.onInsert}>
       <HighlightGroup>
         {highlights}
       </HighlightGroup>
