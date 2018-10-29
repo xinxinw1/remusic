@@ -33,7 +33,9 @@ class SignUpForm extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
+
     this.onSubmit = this.onSubmit.bind(this);
+
   }
 
   onSubmit(event)  {
@@ -42,6 +44,8 @@ class SignUpForm extends Component {
       email,
       passwordOne,
     } = this.state;
+
+    console.log(this.state);
 
     const {
       history,
@@ -84,7 +88,7 @@ class SignUpForm extends Component {
               Sign Up
             </Typography>
             <br/>
-            <form onSubmit={this.onSubmit} noValidate autoComplete="off" className={"root"}>
+            <form  noValidate autoComplete="off" className={"root"}>
               <Grid container spacing={0}>
                 <Grid item xs={12}>
                   <TextField
@@ -133,13 +137,14 @@ class SignUpForm extends Component {
             </form>
           </CardContent>
           <CardActions className={"button"}>
-            <Button variant="contained" color="primary" type="submit" disabled={isInvalid} >
+            <Button variant="contained" color="primary" type="submit" disabled={isInvalid} onClick={this.onSubmit}>
               Sign Up
             </Button>
+
           </CardActions>
           <CardContent className={"root"}>
             <p>
-              Don't have an account? <Link to={routes.signup}>Sign Up</Link>
+              Have an account? <Link to={routes.signup}>Sign Up</Link>
             </p>
           </CardContent>
         </Card>
