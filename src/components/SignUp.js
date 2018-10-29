@@ -76,6 +76,7 @@ class SignUpForm extends Component {
     return (
         <Card className={"card"}>
           <CardContent>
+            <br/>
             <Typography variant="h2" component="h2" className={"root"}>
               Sign Up
             </Typography>
@@ -96,7 +97,7 @@ class SignUpForm extends Component {
                   <TextField
                       label="Email"
                       onChange={event => this.setState(byPropKey('email', event.target.value))}
-                      type="text"
+                      type="email"
                       value={email}
                       margin="normal"
                       variant="outlined"
@@ -129,21 +130,16 @@ class SignUpForm extends Component {
             </form>
           </CardContent>
           <CardActions className={"button"}>
-            <Button variant="contained" color="primary" type="submit"  disabled={isInvalid} >
+            <Button variant="contained" color="primary" type="submit" disabled={isInvalid} >
               Sign Up
             </Button>
-
-
           </CardActions>
           <CardContent className={"root"}>
             <p>
               Don't have an account? <Link to={routes.signup}>Sign Up</Link>
             </p>
           </CardContent>
-
         </Card>
-
-
     )
   }
 }
