@@ -30,10 +30,6 @@ module.exports = {
       {
         from: 'node_modules/pdfjs-dist/build/pdf.worker.js',
         to: 'pdf.worker.js'
-      },
-      {
-        from: 'node_modules/pdfjs-dist/build/pdf.worker.js.map',
-        to: 'pdf.worker.js.map'
       }
     ])
   ]
