@@ -5,11 +5,12 @@ import * as routes from './Main';
 import TextField from "@material-ui/core/TextField";
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import './Signup.css';
+import './SignUp.css';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import BodyClass from './BodyClass';
 
 const SignUpPage = ({ history }) =>
     <div>
@@ -75,6 +76,7 @@ class SignUpForm extends Component {
         username === '';
 
     return (
+        <BodyClass className="body--signup">
         <Card className={"card"}>
           <CardContent>
             <br/>
@@ -141,6 +143,7 @@ class SignUpForm extends Component {
             </p>
           </CardContent>
         </Card>
+        </BodyClass>
     )
   }
 }
