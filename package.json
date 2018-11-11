@@ -17,8 +17,6 @@
     "react": "^16.6.1",
     "react-dom": "^16.6.1",
     "react-dropzone": "^6.2.4",
-    "react-pdf": "^3.0.5",
-    "react-pdf-js": "file:../react-pdf-js",
     "react-router-dom": "^4.3.1",
     "reactstrap": "^6.5.0",
     "vextab": "^2.0.13"
