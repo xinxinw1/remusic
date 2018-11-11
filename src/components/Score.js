@@ -26,6 +26,7 @@ class Score extends React.Component {
     this.scoreId = props.match.params.id;
     this.onPageLoad = this.onPageLoad.bind(this);
     this.onDocumentLoad = this.onDocumentLoad.bind(this);
+    this.onInsertHighlight = this.onInsertHighlight.bind(this);
     this.onCommentSubmit = this.onCommentSubmit.bind(this);
 
     this.scoreRef = firebase.database().ref('scores/' + this.scoreId);
@@ -115,9 +116,18 @@ class Score extends React.Component {
     });
   }
 
-
   onInsertHighlight(bounds) {
     console.log('insert highlight', bounds);
+    var commentChainsRef = firebase.database().ref('comment-chains/' + this.scoreId + '/' + this.state.currVersion + '/' + this.state.page);
+    var commentChainRef = commentChainsRef.push();
+    commentChainRef.set({
+      highlightTop: bounds.top,
+      highlightLeft: bounds.left,
+      highlightWidth: bounds.width,
+      highlightHeight: bounds.height,
+      commentChainTop: bounds.top,
+      commentChainLeft: this.state.scoreWidth + 20,
+    });
   }
 
   onCommentSubmit(commentChainKey, type, content) {
