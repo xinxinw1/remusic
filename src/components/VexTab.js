@@ -50,10 +50,7 @@ class VexTab extends React.Component {
   }
 
   render() {
-    return (
-      <canvas className="vextab-canvas" ref={this.canvasRef}>
-      </canvas>
-    );
+    return <canvas className="vextab-canvas" ref={this.canvasRef} />;
   }
 }
 

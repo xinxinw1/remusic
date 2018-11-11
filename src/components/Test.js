@@ -2,6 +2,7 @@ import React from "react";
 import { HighlightOverlay } from './Highlight';
 import { CommentColumn } from './Comment';
 import BodyClass from './BodyClass';
+import PDF from './PDF';
 
 class TestHighlightOverlay extends React.Component {
   constructor(props) {
@@ -94,9 +95,75 @@ class TestCommentColumn extends React.Component {
   }
 }
 
+class TestPDF extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      file: "https://firebasestorage.googleapis.com/v0/b/remusic-cf7bd.appspot.com/o/pdfs%2F-LMYFwjQjcZeMoq_Iz-P%2F-LMYFwjWVCEpnW63DEs2%2FDirty%20Little%20Secret.pdf?alt=media&token=fdd96ecd-c5bd-4192-bdc6-5128e5179dd9",
+      page: 1,
+      scale: 1.0,
+      width: 0
+    };
+  }
+
+  onDocumentLoad(pdf) {
+    console.log("document load", pdf);
+  }
+
+  onPageLoad(page) {
+    console.log("page load", page);
+  }
+
+  render() {
+    return (
+      <div>
+        <p>
+          File: <input
+            type="text"
+            size="80"
+            value={this.state.file}
+            onChange={e => this.setState({file: e.target.value})}
+          />
+        </p>
+        <p>
+          Page: <input
+            type="number"
+            value={this.state.page}
+            min="1" step="1"
+            onChange={e => this.setState({page: Number(e.target.value)})}
+          />
+        </p>
+        <p>
+          Scale: <input
+            type="number"
+            value={this.state.scale}
+            onChange={e => this.setState({scale: Number(e.target.value)})}
+          />
+        </p>
+        <p>
+          Width: <input
+            type="number"
+            value={this.state.width}
+            onChange={e => this.setState({width: Number(e.target.value)})}
+          />
+        </p>
+        <PDF
+          file={this.state.file}
+          page={this.state.page}
+          scale={this.state.scale}
+          width={this.state.width}
+          onDocumentLoad={this.onDocumentLoad}
+          onPageLoad={this.onPageLoad}
+        />
+      </div>
+    )
+  }
+}
+
 const Test = () => (
   <BodyClass className="a b c">
     <div>
+      <TestPDF />
       <TestHighlightOverlay />
       <TestCommentColumn />
     </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import { firebase } from '../firebase';
 import { Document, Page } from '../react-pdf';
+import PDF from './PDF';
 import "./Score.css";
 import tools from '../tools';
 import { Card, CardText, CardBody, CardTitle, Button } from 'reactstrap';
@@ -26,7 +27,6 @@ class NewScore extends React.Component {
     this.username = "anonymous";
 
     this.scoreId = props.match.params.id;
-    this.documentRef = null;
     this.onPageLoad = this.onPageLoad.bind(this);
     this.onDocumentLoad = this.onDocumentLoad.bind(this);
     this.onCommentSubmit = this.onCommentSubmit.bind(this);
@@ -145,8 +145,8 @@ class NewScore extends React.Component {
     console.log("page load", page);
     this.setState({
       pageLoaded: true,
-      origScoreWidth: page.originalWidth,
-      scoreWidth: 2*page.originalWidth
+      origScoreWidth: page.view[2],
+      scoreWidth: 2*page.view[2]
     });
   }
 
@@ -182,27 +182,6 @@ class NewScore extends React.Component {
         };
       });
     }
-    let pdf = null;
-    if (this.state.file) {
-      pdf = (
-        <HighlightOverlay
-          onInsert={this.onInsertHighlight}
-          highlights={highlights}
-        >
-          <Document
-            file={this.state.file}
-            onLoadSuccess={this.onDocumentLoad}
-          >
-            <Page
-              pageNumber={this.state.page+1}
-              inputRef={(ref) => {this.documentRef = ref;}}
-              onLoadSuccess={this.onPageLoad}
-              width={this.state.scoreWidth}
-            />
-          </Document>
-        </HighlightOverlay>
-      );
-    }
     let paginationItems = [];
     for (let i = 0; i < this.state.numPages; i++) {
       paginationItems.push((
@@ -229,7 +208,18 @@ class NewScore extends React.Component {
           <tbody>
             <tr>
               <td style={{width: this.state.scoreWidth}}>
-                {pdf}
+                <HighlightOverlay
+                  onInsert={this.onInsertHighlight}
+                  highlights={highlights}
+                >
+                  <PDF
+                    file={this.state.file}
+                    onDocumentLoad={this.onDocumentLoad}
+                    page={this.state.page+1}
+                    onPageLoad={this.onPageLoad}
+                    width={this.state.scoreWidth}
+                  />
+                </HighlightOverlay>
               </td>
               <td>
                 <CommentColumn
