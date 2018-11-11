@@ -73,7 +73,6 @@ class CommentChain extends React.Component {
         <hr key={comment.key + "-hr"} />
       ];
     });
-    commentsWithHr.pop();
 
     let buttons = (
       <React.Fragment>
@@ -130,7 +129,6 @@ class CommentChain extends React.Component {
       >
         <CardBody>
           {commentsWithHr}
-          <hr />
           {insertArea}
           {buttons}
         </CardBody>
